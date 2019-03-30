@@ -1,0 +1,48 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:11.2-alpine
+    environment:
+      POSTGRES_USER: krddevdays
+      POSTGRES_PASSWORD: krddevdays
+      POSTGRES_DB: krddevdays
+    healthcheck:
+      test: ["CMD", "pg_isready -U krddevdays"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - webnet
+
+  migration:
+    build: .
+    command: ./manage.py migrate --noinput
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+    networks:
+      - webnet
+
+  app:
+    build: .
+    restart: on-failure
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+      - migration
+    links:
+      - postgres
+    networks:
+      - webnet
+    volumes:
+      - .:/app
+    command: ./manage.py runserver 0.0.0.0:8000
+
+networks:
+  webnet:
