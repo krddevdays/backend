@@ -1,6 +1,8 @@
 from django.contrib.auth import login as auth_login
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.http import JsonResponse
+
+from .forms import UserCreationForm
 
 
 def registration(request):
