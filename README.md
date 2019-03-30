@@ -5,7 +5,7 @@
 1. Create database:
     ```sql
     # create user krddevdays with password 'krddevdays';
-    # create user krddevdays with password 'krddevdays';
+    # create database krddevdays owner krddevdays;
     ```
 2. Initial virtualenv: 
     ```bash
