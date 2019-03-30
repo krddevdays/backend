@@ -5,7 +5,7 @@
 1. Create database:
     ```sql
     # create user krddevdays with password 'krddevdays';
-    # create user krddevdays with password 'krddevdays';
+    # create database krddevdays owner krddevdays;
     ```
 2. Initial virtualenv: 
     ```bash
@@ -34,3 +34,9 @@
     $ docker exec -it backend_app_1 /bin/sh
     /app # ./manage.py createsuperuser
     ```
+
+# Test
+
+```bash
+# ./manage.py test --keepdb
+```
