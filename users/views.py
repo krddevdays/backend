@@ -4,7 +4,7 @@ from django.http import JsonResponse
 
 
 def registration(request):
-    form = UserCreationForm(request, request.POST)
+    form = UserCreationForm(request.POST)
     if form.is_valid():
         user = form.save()
         auth_login(request, user)
