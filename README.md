@@ -34,3 +34,9 @@
     $ docker exec -it backend_app_1 /bin/sh
     /app # ./manage.py createsuperuser
     ```
+
+# Test
+
+```bash
+# ./manage.py test --keepdb
+```
