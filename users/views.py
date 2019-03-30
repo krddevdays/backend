@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.http import JsonResponse
 
 
@@ -16,4 +16,5 @@ def login(request):
 
 
 def logout(request):
-    pass
+    auth_logout(request)
+    return JsonResponse({})
