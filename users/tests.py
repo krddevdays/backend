@@ -29,6 +29,10 @@ class UserTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(self._is_authenticated())
 
+        credentials['password2'] = 'bad password'
+        response = self.client.post(reverse('registration'), credentials)
+        self.assertEqual(response.status_code, 400)
+
     def test_login(self):
         credentials = {'username': self.user.email, 'password': get_random_string()}
         response = self.client.post(reverse('login'), credentials)
