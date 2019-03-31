@@ -14,12 +14,12 @@ class Location(models.Model):
     address = models.CharField(max_length=150)
 
     def __str__(self):
-        return self.name
+        return f'{self.name}, {self.address}'
 
 
 class Place(models.Model):
     name = models.CharField(max_length=50)
-    location = models.ForeignKey(Location, on_delete=models.PROTECT)
+    location = models.ForeignKey(Location, on_delete=models.PROTECT, related_name='place')
 
     def __str__(self):
         return self.name
@@ -32,7 +32,7 @@ class Event(models.Model):
     location = models.ForeignKey(Location, on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.name
+        return f'{self.name}, {self.start_date:%d.%m.%Y}'
 
 
 class Activity(models.Model):
