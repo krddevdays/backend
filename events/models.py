@@ -9,17 +9,17 @@ class ActivityType(enum.Enum):
     LUNCH = 3
 
 
-class Place(models.Model):
-    name = models.CharField(max_length=50)
+class Location(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=150)
 
     def __str__(self):
         return self.name
 
 
-class Location(models.Model):
-    name = models.CharField(max_length=100)
-    address = models.CharField(max_length=150)
-    places = models.ManyToManyField(Place)
+class Place(models.Model):
+    name = models.CharField(max_length=50)
+    location = models.ForeignKey(Location, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.name
