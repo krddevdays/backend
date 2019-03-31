@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from events.models import Event, Place, Activity, Location
+from .models import Event, Place, Activity, Location
 
 
 class ActivityInline(admin.TabularInline):
