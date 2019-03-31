@@ -22,12 +22,12 @@
 
 1. Build:
     ```bash
-    $ docker-compose up -d
+    $ docker-compose build
     ```
-2. Start/stop:
+2. Start:
     ```bash
-    $ docker-compose start
-    $ docker-compose stop
+    $ docker-compose up postgres
+    $ docker-compose up app
     ```
 3. Run management command like:
     ```bash
@@ -38,5 +38,6 @@
 # Test
 
 ```bash
+# pipenv install --dev
 # ./manage.py test --keepdb
 ```
