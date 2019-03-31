@@ -26,7 +26,7 @@ class Area(models.Model):
 
 
 class Activity(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='activities')
     area = models.ForeignKey(Area, on_delete=models.PROTECT)
     type = enum.EnumField(ActivityType)
     name = models.CharField(max_length=100)
