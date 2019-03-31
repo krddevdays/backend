@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from events.models import Event, Area, Activity
+from events.models import Event, Area, Activity, Location
 
 
 @admin.register(Event)
@@ -15,4 +15,9 @@ class AreaAdmin(admin.ModelAdmin):
 
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Location)
+class LocationAdmin(admin.ModelAdmin):
     pass

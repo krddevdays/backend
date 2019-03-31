@@ -38,3 +38,12 @@ class Activity(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Location(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=150)
+    area = models.ForeignKey(Area, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.name
