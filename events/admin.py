@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from events.models import Event, Area, Activity, Location
+from events.models import Event, Place, Activity, Location
 
 
 @admin.register(Event)
@@ -8,8 +8,8 @@ class EventAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Area)
-class AreaAdmin(admin.ModelAdmin):
+@admin.register(Place)
+class PlaceAdmin(admin.ModelAdmin):
     pass
 
 

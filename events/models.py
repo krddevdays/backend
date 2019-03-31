@@ -13,12 +13,13 @@ class Event(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
+    location = models.ForeignKey('Location', on_delete=models.PROTECT)
 
     def __str__(self):
         return self.name
 
 
-class Area(models.Model):
+class Place(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -27,7 +28,7 @@ class Area(models.Model):
 
 class Activity(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    area = models.ForeignKey(Area, on_delete=models.PROTECT)
+    place = models.ForeignKey(Place, on_delete=models.PROTECT)
     type = enum.EnumField(ActivityType)
     name = models.CharField(max_length=100)
     start_date = models.DateTimeField()
@@ -43,7 +44,7 @@ class Activity(models.Model):
 class Location(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=150)
-    area = models.ForeignKey(Area, on_delete=models.PROTECT)
+    places = models.ManyToManyField(Place)
 
     def __str__(self):
         return self.name
