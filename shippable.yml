@@ -1,0 +1,26 @@
+language: python
+
+python:
+  - 3.7
+
+services:
+  - postgres
+
+env:
+  - DB_HOST=127.0.0.1
+    DB_PORT=5432
+    DB_NAME=krddevdays
+    DB_USER=krddevdays
+    DB_PASSWORD=krddevdays
+    SECRET_KEY=secret_for_tests
+    DEBUG=True
+
+build:
+  ci:
+    - psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';" -U postgres
+    - psql -c "ALTER USER $DB_USER CREATEDB;" -U postgres
+    - psql -c "CREATE DATABASE $DB_NAME;" -U postgres
+    - pip install --no-cache-dir pipenv
+    - pipenv install --dev
+    - ./manage.py migrate
+    - ./manage.py test --keepdb
