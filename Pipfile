@@ -9,6 +9,7 @@ factory-boy = "*"
 [packages]
 django = "*"
 psycopg2 = "*"
+django-enumfield = "*"
 
 [requires]
 python_version = "3.7"
