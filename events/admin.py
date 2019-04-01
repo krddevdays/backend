@@ -5,18 +5,17 @@ from .models import Event, Place, Activity, Location
 
 class ActivityInline(admin.TabularInline):
     model = Activity
+    extra = 0
 
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'location')
     inlines = (ActivityInline,)
-
-
-@admin.register(Place)
-class PlaceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'location')
-    list_filter = ('location',)
+    fieldsets = (
+        ('', {'fields': (('name', 'location'),)}),
+        ('', {'fields': (('start_date', 'finish_date'),)})
+    )
 
 
 @admin.register(Activity)
@@ -27,11 +26,10 @@ class ActivityAdmin(admin.ModelAdmin):
 
 class PlacesInline(admin.TabularInline):
     model = Place
-    extra = 1
+    extra = 0
 
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('name', 'address')
-    list_filter = ('place',)
     inlines = (PlacesInline,)
