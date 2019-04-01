@@ -1,9 +1,9 @@
-from django.http import JsonResponse
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
-from events.models import Event, Activity
-from events.serializers import EventSerializer, ActivitySerializer
+from .models import Event, Activity
+from .serializers import EventSerializer, ActivitySerializer
 
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
@@ -14,7 +14,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
     def activities(self, *args, **kwargs):
         event = self.get_object()
         serializer = ActivitySerializer(event.activities.all(), many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
 
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):

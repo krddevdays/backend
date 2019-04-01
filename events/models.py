@@ -9,25 +9,35 @@ class ActivityType(enum.Enum):
     LUNCH = 3
 
 
+class Location(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f'{self.name}, {self.address}'
+
+
+class Place(models.Model):
+    name = models.CharField(max_length=50)
+    location = models.ForeignKey(Location, on_delete=models.PROTECT, related_name='place')
+
+    def __str__(self):
+        return self.name
+
+
 class Event(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
+    location = models.ForeignKey(Location, on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.name
-
-
-class Area(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
+        return f'{self.name}, {self.start_date:%d.%m.%Y}'
 
 
 class Activity(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='activities')
-    area = models.ForeignKey(Area, on_delete=models.PROTECT)
+    place = models.ForeignKey(Place, on_delete=models.PROTECT)
     type = enum.EnumField(ActivityType)
     name = models.CharField(max_length=100)
     start_date = models.DateTimeField()
