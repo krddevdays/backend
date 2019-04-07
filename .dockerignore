@@ -1,0 +1,6 @@
+/.idea
+.env
+.gitignore
+docker-compose.yml
+README.md
+shippable.yml
