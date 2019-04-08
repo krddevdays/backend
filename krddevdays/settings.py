@@ -24,7 +24,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'just_random_string')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', True)
 
-ALLOWED_HOSTS = []
+allowed_host = os.environ.get('ALLOWED_HOSTS', '')
+ALLOWED_HOSTS = ('*',) if allowed_host == '' else (allowed_host,)
 
 
 INSTALLED_APPS = [
