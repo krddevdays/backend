@@ -5,7 +5,7 @@ from django.db import models
 class User(AbstractUser):
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = ()
+    REQUIRED_FIELDS = ('username',)
 
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=150)
