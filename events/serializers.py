@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Event, Activity, ActivityType
+from .models import Event, Activity, ActivityType, Venue
 
 
 class EnumField(serializers.ChoiceField):
@@ -8,16 +8,24 @@ class EnumField(serializers.ChoiceField):
         return self.choices[obj].name
 
 
+class VenueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Venue
+        fields = ('name', 'address', 'latitude', 'longitude')
+
+
 class EventSerializer(serializers.ModelSerializer):
+    venue = VenueSerializer()
+
     class Meta:
         model = Event
-        fields = ('id', 'name', 'start_date', 'finish_date')
+        fields = ('id', 'name', 'start_date', 'finish_date', 'venue')
 
 
 class ActivitySerializer(serializers.ModelSerializer):
     type = EnumField(choices=ActivityType.choices())
-    place = serializers.CharField(source='place.name')
+    zone = serializers.CharField(source='zone.name')
 
     class Meta:
         model = Activity
-        fields = ('name', 'place', 'type', 'start_date', 'finish_date')
+        fields = ('name', 'zone', 'type', 'start_date', 'finish_date')

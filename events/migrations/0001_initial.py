@@ -38,34 +38,36 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Location',
+            name='Venue',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100)),
                 ('address', models.CharField(max_length=150)),
+                ('latitude', models.FloatField(blank=True, null=True)),
+                ('longitude', models.FloatField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Place',
+            name='Zone',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=50)),
-                ('location', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='events.Location')),
+                ('venue', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='zone', to='events.Venue')),
             ],
         ),
         migrations.AddField(
             model_name='event',
-            name='location',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='events.Location'),
+            name='venue',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='events.Venue'),
         ),
         migrations.AddField(
             model_name='activity',
             name='event',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='events.Event'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='activities', to='events.Event'),
         ),
         migrations.AddField(
             model_name='activity',
-            name='place',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='events.Place'),
+            name='zone',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='events.Zone'),
         ),
     ]

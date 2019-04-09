@@ -9,17 +9,19 @@ class ActivityType(enum.Enum):
     LUNCH = 3
 
 
-class Location(models.Model):
+class Venue(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=150)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.name}, {self.address}'
 
 
-class Place(models.Model):
+class Zone(models.Model):
     name = models.CharField(max_length=50)
-    location = models.ForeignKey(Location, on_delete=models.PROTECT, related_name='place')
+    venue = models.ForeignKey(Venue, on_delete=models.PROTECT, related_name='zone')
 
     def __str__(self):
         return self.name
@@ -29,7 +31,7 @@ class Event(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
-    location = models.ForeignKey(Location, on_delete=models.PROTECT)
+    venue = models.ForeignKey(Venue, on_delete=models.PROTECT)
 
     def __str__(self):
         return f'{self.name}, {self.start_date:%d.%m.%Y}'
@@ -37,7 +39,7 @@ class Event(models.Model):
 
 class Activity(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='activities')
-    place = models.ForeignKey(Place, on_delete=models.PROTECT)
+    zone = models.ForeignKey(Zone, on_delete=models.PROTECT)
     type = enum.EnumField(ActivityType)
     name = models.CharField(max_length=100)
     start_date = models.DateTimeField()
