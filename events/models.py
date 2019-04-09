@@ -12,8 +12,8 @@ class ActivityType(enum.Enum):
 class Venue(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=150)
-    latitude = models.FloatField(blank=True, null=True)
-    longitude = models.FloatField(blank=True, null=True)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
 
     def __str__(self):
         return f'{self.name}, {self.address}'

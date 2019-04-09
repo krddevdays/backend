@@ -43,8 +43,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100)),
                 ('address', models.CharField(max_length=150)),
-                ('latitude', models.FloatField(blank=True, null=True)),
-                ('longitude', models.FloatField(blank=True, null=True)),
+                ('latitude', models.FloatField()),
+                ('longitude', models.FloatField()),
             ],
         ),
         migrations.CreateModel(
