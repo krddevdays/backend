@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('type', django_enumfield.db.fields.EnumField(default=0, enum=events.models.ActivityType)),
-                ('name', models.CharField(max_length=100)),
+                ('name', models.CharField(max_length=255)),
                 ('start_date', models.DateTimeField()),
                 ('finish_date', models.DateTimeField()),
             ],

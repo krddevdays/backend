@@ -41,7 +41,7 @@ class Activity(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='activities')
     zone = models.ForeignKey(Zone, on_delete=models.PROTECT)
     type = enum.EnumField(ActivityType)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
 
