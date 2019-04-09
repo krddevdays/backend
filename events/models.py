@@ -28,7 +28,7 @@ class Zone(models.Model):
 
 
 class Event(models.Model):
-    name = models.CharField(max_length=100, null=False, blank=False)
+    name = models.CharField(max_length=100)
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
     venue = models.ForeignKey(Venue, on_delete=models.PROTECT)
