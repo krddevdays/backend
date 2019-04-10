@@ -5,7 +5,7 @@ from .models import Event, Zone, Activity, Venue
 
 class ActivityInline(admin.TabularInline):
     model = Activity
-    extra = 1
+    extra = 0
 
 
 @admin.register(Event)
@@ -26,7 +26,7 @@ class ActivityAdmin(admin.ModelAdmin):
 
 class ZonesInline(admin.TabularInline):
     model = Zone
-    extra = 1
+    extra = 0
 
     def has_add_permission(self, request, obj=None):
         return True
