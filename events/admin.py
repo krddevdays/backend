@@ -23,8 +23,14 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
-    list_display = ('event', 'type', 'name', 'zone', 'start_date', 'finish_date')
-    list_filter = ('event', 'zone')
+    list_display = ('name', 'event', 'type', 'zone', 'start_date', 'finish_date')
+    list_filter = ('event', 'zone', 'type')
+    fieldsets = (
+        ('', {'fields': (('event', 'zone', 'type'), 'name', ('start_date', 'finish_date'))}),
+    )
+
+    def get_queryset(self, request):
+        return super(ActivityAdmin, self).get_queryset(request).order_by('start_date', 'zone')
 
 
 class ZonesInline(admin.TabularInline):
@@ -36,3 +42,6 @@ class ZonesInline(admin.TabularInline):
 class VenueAdmin(admin.ModelAdmin):
     list_display = ('name', 'address', 'latitude', 'longitude')
     inlines = (ZonesInline,)
+    fieldsets = (
+        ('', {'fields': (('name', 'address'), ('latitude', 'longitude'))}),
+    )
