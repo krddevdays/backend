@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     'users',
     'events',
+    'talks',
 ]
 
 MIDDLEWARE = [

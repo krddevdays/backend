@@ -6,6 +6,8 @@ from .models import Event, Zone, Activity, Venue
 class ActivityInline(admin.TabularInline):
     model = Activity
     extra = 0
+    fields = ('zone', 'type', 'related_thing', 'start_date', 'finish_date')
+    readonly_fields = ('related_thing',)
 
     def get_queryset(self, request):
         return super(ActivityInline, self).get_queryset(request).order_by('start_date', 'zone')
@@ -23,10 +25,10 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
-    list_display = ('name', 'event', 'type', 'zone', 'start_date', 'finish_date')
+    list_display = ('id', 'event', 'type', 'zone', 'start_date', 'finish_date')
     list_filter = ('event', 'zone', 'type')
     fieldsets = (
-        ('', {'fields': (('event', 'zone', 'type'), 'name', ('start_date', 'finish_date'))}),
+        ('', {'fields': (('event', 'zone', 'type'), 'related_thing', ('start_date', 'finish_date'))}),
     )
 
     def get_queryset(self, request):

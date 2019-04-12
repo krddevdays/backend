@@ -37,11 +37,15 @@ class Event(models.Model):
         return f'{self.name}, {self.start_date:%d.%m.%Y}'
 
 
+class CoffeeMock:  # будет реализовывать ActivityInterface
+    pass
+
+
 class Activity(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='activities')
     zone = models.ForeignKey(Zone, on_delete=models.PROTECT)
     type = enum.EnumField(ActivityType)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)  # todo: remove, вынести в связную сущность
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
 
@@ -50,3 +54,12 @@ class Activity(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def related_thing(self):
+        if self.type == ActivityType.TALK:
+            return self.talk
+        elif self.type == ActivityType.COFFEE:
+            return CoffeeMock
+        else:
+            return None
