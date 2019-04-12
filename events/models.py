@@ -24,7 +24,7 @@ class Zone(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.PROTECT, related_name='zone')
 
     def __str__(self):
-        return self.name
+        return f'{self.name} ({self.venue.name})'
 
 
 class Event(models.Model):

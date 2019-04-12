@@ -7,6 +7,9 @@ class ActivityInline(admin.TabularInline):
     model = Activity
     extra = 0
 
+    def get_queryset(self, request):
+        return super(ActivityInline, self).get_queryset(request).order_by('start_date', 'zone')
+
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
@@ -27,9 +30,6 @@ class ActivityAdmin(admin.ModelAdmin):
 class ZonesInline(admin.TabularInline):
     model = Zone
     extra = 0
-
-    def has_add_permission(self, request, obj=None):
-        return True
 
 
 @admin.register(Venue)
