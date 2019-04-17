@@ -1,12 +1,7 @@
 from django.db import models
 from django_enumfield import enum
 
-
-class ActivityType(enum.Enum):
-    WELCOME = 0
-    TALK = 1
-    COFFEE = 2
-    LUNCH = 3
+from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity
 
 
 class Venue(models.Model):
@@ -37,15 +32,10 @@ class Event(models.Model):
         return f'{self.name}, {self.start_date:%d.%m.%Y}'
 
 
-class CoffeeMock:  # будет реализовывать ActivityInterface
-    pass
-
-
 class Activity(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='activities')
     zone = models.ForeignKey(Zone, on_delete=models.PROTECT)
     type = enum.EnumField(ActivityType)
-    name = models.CharField(max_length=255)  # todo: remove, вынести в связную сущность
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
 
@@ -53,13 +43,14 @@ class Activity(models.Model):
         verbose_name_plural = 'Activities'
 
     def __str__(self):
-        return self.name
+        return f'{self.event} - {self.zone} - {self.start_date}'
 
     @property
-    def related_thing(self):
-        if self.type == ActivityType.TALK:
-            return self.talk
-        elif self.type == ActivityType.COFFEE:
-            return CoffeeMock
-        else:
-            return None
+    def thing(self):
+        items = {
+            ActivityType.TALK: getattr(self, 'talk', '-'),
+            ActivityType.WELCOME: WelcomeActivity(),
+            ActivityType.COFFEE: CoffeeActivity(),
+            ActivityType.LUNCH: LunchActivity(),
+        }
+        return items.get(self.type)

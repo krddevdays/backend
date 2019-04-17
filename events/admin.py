@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from .models import Event, Zone, Activity, Venue
 
@@ -6,11 +7,14 @@ from .models import Event, Zone, Activity, Venue
 class ActivityInline(admin.TabularInline):
     model = Activity
     extra = 0
-    fields = ('zone', 'type', 'related_thing', 'start_date', 'finish_date')
-    readonly_fields = ('related_thing',)
+    fields = ('zone', 'type', 'thing_link', 'start_date', 'finish_date')
+    readonly_fields = ('thing_link',)
 
     def get_queryset(self, request):
         return super(ActivityInline, self).get_queryset(request).order_by('start_date', 'zone')
+
+    def thing_link(self, obj):
+        return mark_safe(obj.thing.self_link())
 
 
 @admin.register(Event)
@@ -28,7 +32,7 @@ class ActivityAdmin(admin.ModelAdmin):
     list_display = ('id', 'event', 'type', 'zone', 'start_date', 'finish_date')
     list_filter = ('event', 'zone', 'type')
     fieldsets = (
-        ('', {'fields': (('event', 'zone', 'type'), 'related_thing', ('start_date', 'finish_date'))}),
+        ('', {'fields': (('event', 'zone', 'type'), 'thing', ('start_date', 'finish_date'))}),
     )
 
     def get_queryset(self, request):

@@ -6,7 +6,7 @@ from talks.models import Speaker, Talk
 @admin.register(Speaker)
 class SpeakerAdmin(admin.ModelAdmin):
     fieldsets = (
-        ('', {'fields': (('first_name', 'last_name'),)}),
+        ('', {'fields': (('first_name', 'last_name'), ('work', 'position'))}),
     )
 
 
