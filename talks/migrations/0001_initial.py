@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('first_name', models.CharField(max_length=50)),
                 ('last_name', models.CharField(max_length=50)),
+                ('avatar', models.URLField()),
                 ('position', models.CharField(blank=True, max_length=50, null=True)),
                 ('work', models.CharField(blank=True, max_length=100, null=True)),
             ],
@@ -28,9 +29,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=255)),
+                ('description', models.TextField()),
                 ('activity', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='events.Activity')),
                 ('speaker', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='talks.Speaker')),
-                ('poster', models.URLField()),
                 ('presentation_offline', models.URLField(null=True, blank=True)),
                 ('presentation_online', models.URLField(null=True, blank=True)),
                 ('video', models.URLField(null=True, blank=True)),

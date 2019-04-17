@@ -8,6 +8,7 @@ from events.models import Activity
 class Speaker(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    avatar = models.URLField()
     work = models.CharField(max_length=100, null=True, blank=True)
     position = models.CharField(max_length=50, null=True, blank=True)
 
@@ -18,8 +19,8 @@ class Speaker(models.Model):
 class Talk(ActivityInterface, models.Model):
     activity = models.OneToOneField(Activity, on_delete=models.PROTECT, null=True, blank=True)
     title = models.CharField(max_length=255)
+    description = models.TextField()
     speaker = models.ForeignKey(Speaker, on_delete=models.PROTECT)
-    poster = models.URLField()
     presentation_online = models.URLField(null=True, blank=True)
     presentation_offline = models.URLField(null=True, blank=True)
     video = models.URLField(null=True, blank=True)

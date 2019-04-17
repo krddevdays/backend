@@ -48,7 +48,7 @@ class Activity(models.Model):
     @property
     def thing(self):
         items = {
-            ActivityType.TALK: getattr(self, 'talk', '-'),
+            ActivityType.TALK: getattr(self, 'talk', None),
             ActivityType.WELCOME: WelcomeActivity(),
             ActivityType.COFFEE: CoffeeActivity(),
             ActivityType.LUNCH: LunchActivity(),
