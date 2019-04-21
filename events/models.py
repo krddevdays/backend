@@ -43,7 +43,7 @@ class Activity(models.Model):
         verbose_name_plural = 'Activities'
 
     def __str__(self):
-        return f'{self.event} - {self.zone} - {self.start_date}'
+        return f'{self.event} - {self.zone} - {self.start_date:%d.%m.%Y-%H:%M}'
 
     @property
     def thing(self):
