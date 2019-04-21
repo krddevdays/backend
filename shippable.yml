@@ -20,7 +20,12 @@ build:
     - psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';" -U postgres
     - psql -c "ALTER USER $DB_USER CREATEDB;" -U postgres
     - psql -c "CREATE DATABASE $DB_NAME;" -U postgres
+
     - pip install --no-cache-dir pipenv
     - pipenv install --dev
+    - mkdir -p shippable/codecoverage
     - ./manage.py migrate
-    - ./manage.py test --keepdb
+
+    - coverage run --source='.' manage.py test
+    - coverage report
+    - coverage xml -o shippable/codecoverage/coverage.xml test.py
