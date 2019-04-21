@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('first_name', models.CharField(max_length=50)),
                 ('last_name', models.CharField(max_length=50)),
-                ('avatar', models.URLField()),
+                ('avatar', models.URLField(blank=True, null=True)),
                 ('position', models.CharField(blank=True, max_length=50, null=True)),
                 ('work', models.CharField(blank=True, max_length=100, null=True)),
             ],

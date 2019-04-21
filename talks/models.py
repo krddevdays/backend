@@ -8,7 +8,7 @@ from events.models import Activity
 class Speaker(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    avatar = models.URLField()
+    avatar = models.URLField(blank=True, null=True)
     work = models.CharField(max_length=100, null=True, blank=True)
     position = models.CharField(max_length=50, null=True, blank=True)
 
