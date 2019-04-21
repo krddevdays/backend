@@ -1,9 +1,11 @@
+from django.apps import apps
 from django.contrib.auth import get_user
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.crypto import get_random_string
 
+from users.apps import UsersConfig
 from users.factories import UserFactory
 
 
@@ -18,6 +20,10 @@ class UserTestCase(TestCase):
     def _is_authenticated(self):
         user = get_user(self.client)
         return user.is_authenticated
+
+    def test_apps(self):
+        self.assertEqual(UsersConfig.name, 'users')
+        self.assertEqual(apps.get_app_config('users').name, 'users')
 
     def test_registration(self):
         credentials = {
