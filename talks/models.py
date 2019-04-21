@@ -26,4 +26,4 @@ class Talk(ActivityInterface, models.Model):
     video = models.URLField(null=True, blank=True)
 
     def self_link(self):
-        return f"<a href={reverse('admin:talks_talk_change', args=(self.id,))}>{self.title}</a>"
+        return f"<a href=\"{reverse('admin:talks_talk_change', args=(self.id,))}\">{self.title}</a>"

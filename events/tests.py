@@ -1,8 +1,10 @@
 import datetime
 
+from django.apps import apps
 from django.test import TestCase
 from rest_framework.reverse import reverse
 
+from events.apps import EventsConfig
 from events.factories import EventFactory, VenueFactory, ZoneFactory, ActivityFactory
 from events.interfaces import ActivityType, WelcomeActivity
 
@@ -23,6 +25,10 @@ class EventsTestCase(TestCase):
         self.assertEqual(venue['address'], event.venue.address)
         self.assertEqual(venue['latitude'], event.venue.latitude)
         self.assertEqual(venue['longitude'], event.venue.longitude)
+
+    def test_apps(self):
+        self.assertEqual(EventsConfig.name, 'events')
+        self.assertEqual(apps.get_app_config('events').name, 'events')
 
     def test_events_list(self):
         response = self.client.get(reverse('event-list'))
@@ -45,16 +51,18 @@ class EventsTestCase(TestCase):
 
     def test_activities(self):
         activity = ActivityFactory(event=self.event, type=ActivityType.WELCOME)
+        ActivityFactory(event=self.event, type=ActivityType.TALK)
         response = self.client.get(reverse('event-activities', args=(self.event.id,)))
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(len(data), 1)
-        obj = data[0]
+        self.assertEqual(len(data), 2)
+        obj = next((item for item in data if item['type'] == 'WELCOME'))
         self.assertEqual(obj['zone'], activity.zone.name)
-        self.assertEqual(obj['type'], 'WELCOME')
         self.assertEqual(obj['start_date'], activity.start_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
         self.assertEqual(obj['finish_date'], activity.finish_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
         self.assertEqual(obj['thing'], {'title': 'Открытие'})
+        obj = next((item for item in data if item['type'] == 'TALK'))
+        self.assertEqual(obj['thing'], None)
 
     def test_str(self):
         venue = VenueFactory(name='venue name', address='address')
