@@ -12,6 +12,7 @@ psycopg2 = "*"
 django-enumfield = "*"
 djangorestframework = "*"
 coverage = "*"
+django-nose = "*"
 
 [requires]
 python_version = "3.7"

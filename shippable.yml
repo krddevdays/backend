@@ -23,8 +23,9 @@ build:
 
     - pip install --no-cache-dir pipenv
     - pipenv install --dev
+    - mkdir -p shippable/testresults
     - mkdir -p shippable/codecoverage
     - ./manage.py migrate
 
-    - coverage run --source='.' manage.py test
+    - coverage run --source='.' manage.py test --with-xunit --xunit-file=shippable/testresults/nosetests.xml
     - coverage xml -o shippable/codecoverage/coverage.xml
