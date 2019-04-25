@@ -1,7 +1,13 @@
+import requests
+from django.conf import settings
 from django.db import models
 from django_enumfield import enum
 
 from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity
+
+
+class ExternalSystemError(Exception):
+    pass
 
 
 class Venue(models.Model):
@@ -27,9 +33,27 @@ class Event(models.Model):
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
     venue = models.ForeignKey(Venue, on_delete=models.PROTECT)
+    external_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.name}, {self.start_date:%d.%m.%Y}'
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        if self.external_id is not None:
+            self.check_qtickets_event()
+
+        super(Event, self).save(force_insert, force_update, using, update_fields)
+
+    def check_qtickets_event(self):
+        """ Check qtickets system for this event id by calling their API """
+        headers = {'Authorization': f'Bearer {settings.QTICKETS_TOKEN}'}
+        endpoint = f'{settings.QTICKETS_ENDPOINT}/api/rest/v1/events/{self.external_id}'
+        try:
+            event_request = requests.head(endpoint, headers=headers)
+            event_request.raise_for_status()
+        except requests.exceptions.RequestException:
+            raise ExternalSystemError(f'Event {self.external_id} was not found')
 
 
 class Activity(models.Model):

@@ -1,7 +1,7 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.utils.safestring import mark_safe
 
-from .models import Event, Zone, Activity, Venue
+from .models import Event, Zone, Activity, Venue, ExternalSystemError
 
 
 class ActivityInline(admin.TabularInline):
@@ -23,8 +23,25 @@ class EventAdmin(admin.ModelAdmin):
     inlines = (ActivityInline,)
     fieldsets = (
         ('', {'fields': (('name', 'venue'),)}),
-        ('', {'fields': (('start_date', 'finish_date'),)})
+        ('', {'fields': (('start_date', 'finish_date'),)}),
+        ('QTicket system', {'fields': ('external_id',)})
     )
+
+    def add_view(self, request, form_url='', extra_context=None):
+        try:
+            return super().add_view(request, form_url, extra_context)
+        except ExternalSystemError as e:
+            request.method = 'GET'
+            messages.error(request, e)
+            return super().add_view(request, form_url, extra_context)
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        try:
+            return super().change_view(request, object_id, form_url, extra_context)
+        except ExternalSystemError as e:
+            request.method = 'GET'
+            messages.error(request, e)
+            return super().change_view(request, object_id, form_url, extra_context)
 
 
 @admin.register(Activity)

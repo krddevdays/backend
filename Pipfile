@@ -8,11 +8,12 @@ factory-boy = "*"
 
 [packages]
 django = "*"
-psycopg2 = "*"
+psycopg2_binary = "*"
 django-enumfield = "*"
 djangorestframework = "*"
 coverage = "*"
 django-nose = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
