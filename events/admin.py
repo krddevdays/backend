@@ -1,8 +1,9 @@
-from django.contrib import admin, messages
+from django import forms
+from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import Event, Zone, Activity, Venue
-from .utils import ExternalSystemError
+from .utils import ExternalSystemError, check_qtickets_event
 
 
 class ActivityInline(admin.TabularInline):
@@ -18,31 +19,29 @@ class ActivityInline(admin.TabularInline):
         return mark_safe(obj.thing.self_link())
 
 
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = '__all__'
+
+    def clean_external_id(self):
+        data = self.cleaned_data['external_id']
+        try:
+            check_qtickets_event(data)
+        except ExternalSystemError as e:
+            raise forms.ValidationError(e)
+
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'venue')
     inlines = (ActivityInline,)
+    form = EventForm
     fieldsets = (
         ('', {'fields': (('name', 'venue'),)}),
         ('', {'fields': (('start_date', 'finish_date'),)}),
         ('QTicket system', {'fields': ('external_id',)})
     )
-
-    def add_view(self, request, form_url='', extra_context=None):
-        try:
-            return super().add_view(request, form_url, extra_context)
-        except ExternalSystemError as e:
-            request.method = 'GET'
-            messages.error(request, e)
-            return super().add_view(request, form_url, extra_context)
-
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        try:
-            return super().change_view(request, object_id, form_url, extra_context)
-        except ExternalSystemError as e:
-            request.method = 'GET'
-            messages.error(request, e)
-            return super().change_view(request, object_id, form_url, extra_context)
 
 
 @admin.register(Activity)
