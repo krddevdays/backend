@@ -13,6 +13,7 @@ django-enumfield = "*"
 djangorestframework = "*"
 coverage = "*"
 django-nose = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
