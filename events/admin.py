@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from requests import HTTPError
 
 from .models import Event, Zone, Activity, Venue
-from .utils import ExternalSystemError, check_qtickets_event
+from .qtickets import ExternalSystemError, check_qtickets_event
 
 
 class ActivityInline(admin.TabularInline):

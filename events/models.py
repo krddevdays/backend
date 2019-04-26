@@ -2,7 +2,7 @@ from django.db import models
 from django_enumfield import enum
 
 from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity
-from .utils import check_qtickets_event
+from .qtickets import check_qtickets_event
 
 
 class Venue(models.Model):
