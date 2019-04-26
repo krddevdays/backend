@@ -1,7 +1,8 @@
 from django.contrib import admin, messages
 from django.utils.safestring import mark_safe
 
-from .models import Event, Zone, Activity, Venue, ExternalSystemError
+from .models import Event, Zone, Activity, Venue
+from .utils import ExternalSystemError
 
 
 class ActivityInline(admin.TabularInline):
