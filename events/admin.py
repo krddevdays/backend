@@ -33,6 +33,7 @@ class EventForm(forms.ModelForm):
             raise forms.ValidationError(e)
         except HTTPError as e:
             raise forms.ValidationError(e)
+        return data
 
 
 @admin.register(Event)
