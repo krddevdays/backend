@@ -11,8 +11,7 @@ def check_qtickets_event(external_id: int):
 
     headers = {'Authorization': f'Bearer {settings.QTICKETS_TOKEN}'}
     endpoint = f'{settings.QTICKETS_ENDPOINT}/api/rest/v1/events/{external_id}'
-    try:
-        event_request = requests.head(endpoint, headers=headers)
-        event_request.raise_for_status()
-    except requests.exceptions.RequestException:
+    event_request = requests.head(endpoint, headers=headers)
+    if event_request.status_code == 404:
         raise ExternalSystemError(f'Event {external_id} was not found')
+    event_request.raise_for_status()

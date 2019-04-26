@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from requests import HTTPError
 
 from .models import Event, Zone, Activity, Venue
 from .utils import ExternalSystemError, check_qtickets_event
@@ -29,6 +30,8 @@ class EventForm(forms.ModelForm):
         try:
             check_qtickets_event(data)
         except ExternalSystemError as e:
+            raise forms.ValidationError(e)
+        except HTTPError as e:
             raise forms.ValidationError(e)
 
 
