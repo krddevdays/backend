@@ -7,7 +7,7 @@ class ExternalSystemError(Exception):
 
 
 def check_qtickets_event(external_id: int):
-    """ Check qtickets system for this event id by calling their API """
+    """ Check qtickets.com system for this event id by calling their API """
 
     headers = {'Authorization': f'Bearer {settings.QTICKETS_TOKEN}'}
     endpoint = f'{settings.QTICKETS_ENDPOINT}/api/rest/v1/events/{external_id}'
