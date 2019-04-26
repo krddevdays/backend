@@ -1,9 +1,7 @@
 import requests
 from django.conf import settings
 
-
-class ExternalSystemError(Exception):
-    pass
+from .exceptions import ExternalSystemError
 
 
 def check_qtickets_event(external_id: int):
