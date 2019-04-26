@@ -8,7 +8,7 @@ factory-boy = "*"
 
 [packages]
 django = "*"
-psycopg2_binary = "*"
+psycopg2 = "*"
 django-enumfield = "*"
 djangorestframework = "*"
 coverage = "*"
