@@ -3,7 +3,7 @@ from django.db import models
 from django_enumfield import enum
 
 from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity
-from .qtickets import QTickets
+from .qtickets import QTicketsInfo
 
 
 class Venue(models.Model):
@@ -37,7 +37,7 @@ class Event(models.Model):
     def clean(self):
         if self.external_id is not None:
             try:
-                QTickets.check_event_exist(self.external_id)
+                QTicketsInfo.check_event_exist(self.external_id)
             except Exception as e:
                 raise forms.ValidationError({
                     'external_id': forms.ValidationError(str(e))
