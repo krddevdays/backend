@@ -14,13 +14,13 @@ class QTickets:
         self.session = requests.Session()
         self.session.headers = {'Authorization': f'Bearer {settings.QTICKETS_TOKEN}'}
 
-    def event_url(self, event_id: int) -> str:
+    def get_event_url(self, event_id: int) -> str:
         return f'{self.API_endpoint}events/{event_id}'
 
     def check_event_exist(self, external_id: int):
         """ Check qtickets.com system for this event id by calling their API """
 
-        self.session.head(url=self.event_url(external_id)).raise_for_status()
+        self.session.head(url=self.get_event_url(external_id)).raise_for_status()
 
     def _make_request(self, method: str, url: str, **kwargs):
         return self.session.request(method=method, url=url, **kwargs).json()
@@ -28,16 +28,21 @@ class QTickets:
     def get_event_data(self, external_id: int):
         return self._make_request(
             method='GET',
-            url=self.event_url(external_id),
-            json={
-                "select": [
-                    "name",
-                    "free_quantity",
-                    "price",
-                    "disabled"
-                ]
-            }
+            url=self.get_event_url(external_id)
         )['data']
+
+    def get_seats_data(self, show_id):
+        return self._make_request('GET', self.get_seats_url(show_id), json={
+            "select": [
+                "name",
+                "free_quantity",
+                "price",
+                "disabled"
+            ]
+        })
+
+    def get_seats_url(self, show_id) -> str:
+        return f'{self.API_endpoint}shows/{show_id}/seats'
 
 
 QTicketsInfo = QTickets()
@@ -49,7 +54,7 @@ class PaymentSerializer(serializers.Serializer):
     type = serializers.CharField()
 
 
-class TicketSerializer(serializers.Serializer):
+class TicketsSerializer(serializers.Serializer):
     def __init__(self, **kwargs):
         old_data = kwargs.get('data')
         show = old_data['shows'][0]
