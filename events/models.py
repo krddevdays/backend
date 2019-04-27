@@ -1,3 +1,4 @@
+from django import forms
 from django.db import models
 from django_enumfield import enum
 
@@ -33,11 +34,14 @@ class Event(models.Model):
     def __str__(self):
         return f'{self.name}, {self.start_date:%d.%m.%Y}'
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
+    def clean(self):
         if self.external_id is not None:
-            check_qtickets_event(self.external_id)
-        super(Event, self).save(force_insert, force_update, using, update_fields)
+            try:
+                check_qtickets_event(self.external_id)
+            except Exception as e:
+                raise forms.ValidationError({
+                    'external_id': forms.ValidationError(str(e))
+                })
 
 
 class Activity(models.Model):

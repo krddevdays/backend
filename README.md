@@ -3,6 +3,8 @@
 
 # Installation
 
+Copy `.env.example` to `.env` and fill variables
+
 ## Manual
 
 1. Create database:
@@ -10,12 +12,12 @@
     # create user krddevdays with password 'krddevdays';
     # create database krddevdays owner krddevdays;
     ```
-2. Initial virtualenv: 
+1. Initial virtualenv: 
     ```bash
     $ pipenv --python 3.7
     $ pipenv sync
     ```
-3. Migrate database:
+1. Migrate database:
     ```bash
     $ ./manage.py migrate
     $ ./manage.py createsuperuser
@@ -27,12 +29,12 @@
     ```bash
     $ docker-compose build
     ```
-2. Start:
+1. Start:
     ```bash
     $ docker-compose up postgres
     $ docker-compose up app
     ```
-3. Run management command like:
+1. Run management command like:
     ```bash
     $ docker exec -it backend_app_1 /bin/sh
     /app # ./manage.py createsuperuser
