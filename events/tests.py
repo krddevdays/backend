@@ -62,7 +62,10 @@ class EventsTestCase(TestCase):
         self.assertEqual(obj['finish_date'], activity.finish_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
         self.assertEqual(obj['thing'], {'title': 'Открытие'})
         obj = next((item for item in data if item['type'] == 'TALK'))
-        self.assertEqual(obj['thing'], None)
+        self.assertIsNone(obj['thing'])
+
+    def test_tickets(self):
+        pass
 
     def test_str(self):
         venue = VenueFactory(name='venue name', address='address')

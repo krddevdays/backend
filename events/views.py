@@ -16,6 +16,10 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = ActivitySerializer(event.activities.all(), many=True)
         return Response(serializer.data)
 
+    @action(detail=True)
+    def tickets(self, *args, **kwargs):
+        return Response(data={})
+
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Activity.objects.all()
