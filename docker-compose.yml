@@ -14,18 +14,6 @@ services:
     networks:
       - webnet
 
-  migration:
-    build: .
-    command: ./manage.py migrate --noinput
-    env_file:
-      - .env
-    volumes:
-      - .:/app
-    depends_on:
-      - postgres
-    networks:
-      - webnet
-
   app:
     build: .
     restart: on-failure
@@ -35,14 +23,12 @@ services:
       - 8000:8000
     depends_on:
       - postgres
-      - migration
     links:
       - postgres
     networks:
       - webnet
     volumes:
       - .:/app
-    command: ./manage.py runserver 0.0.0.0:8000
 
 networks:
   webnet:
