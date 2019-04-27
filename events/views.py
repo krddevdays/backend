@@ -23,8 +23,10 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         if event.external_id is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
         else:
-            data = QTicketsInfo.get_event_data(event.external_id)
-            tickets = TicketsSerializer(data=data)
+            event_data = QTicketsInfo.get_event_data(event.external_id)
+            seats_data = QTicketsInfo.get_seats_data(event_data['shows'][0]['id'])
+            tickets = TicketsSerializer(data={'event_data': event_data, 'seats_data': seats_data})
+
             if tickets.is_valid(raise_exception=True):
                 return Response(data=tickets.data)
 

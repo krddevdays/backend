@@ -31,7 +31,7 @@ class QTickets:
             url=self.get_event_url(external_id)
         )['data']
 
-    def get_seats_data(self, show_id):
+    def get_seats_data(self, show_id: str):
         return self._make_request('GET', self.get_seats_url(show_id), json={
             "select": [
                 "name",
@@ -39,7 +39,7 @@ class QTickets:
                 "price",
                 "disabled"
             ]
-        })
+        })['data']
 
     def get_seats_url(self, show_id) -> str:
         return f'{self.API_endpoint}shows/{show_id}/seats'
@@ -56,14 +56,15 @@ class PaymentSerializer(serializers.Serializer):
 
 class TicketsSerializer(serializers.Serializer):
     def __init__(self, **kwargs):
-        old_data = kwargs.get('data')
-        show = old_data['shows'][0]
+        show_data = kwargs['data'].get('event_data')
+        seats_data = kwargs['data'].get('seats_data')
+        show = show_data['shows'][0]
         prepared_data = dict(
-            is_active=old_data['is_active'] and show['is_active'],
+            is_active=show_data['is_active'] and show['is_active'],
             sale_start_date=show['sale_start_date'],
             sale_finish_date=show['sale_finish_date'],
             payments=[{'id': payment['id'], 'name': payment['name'], 'type': payment['handler']}
-                      for payment in old_data['payments']
+                      for payment in show_data['payments']
                       if payment['is_active']]
         )
         super().__init__(data=prepared_data)
