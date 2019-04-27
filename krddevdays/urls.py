@@ -7,5 +7,5 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('', include('events.urls')),
     path('', include('talks.urls')),
-    path('docs/', include_docs_urls(title='My API title'))
+    path('docs/', include_docs_urls(title='KrdDevDays API'))
 ]
