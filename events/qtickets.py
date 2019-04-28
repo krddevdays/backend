@@ -48,10 +48,22 @@ class QTickets:
 QTicketsInfo = QTickets()
 
 
+class ModifiersSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    value = serializers.DecimalField(max_digits=10, decimal_places=2)
+    sales_count_value = serializers.IntegerField(required=False)
+    frm = serializers.DateTimeField(required=False)
+    to = serializers.DateTimeField(required=False)
+
+
+ModifiersSerializer._declared_fields['from'] = ModifiersSerializer._declared_fields['frm']
+del ModifiersSerializer._declared_fields['frm']
+
+
 class PriceSerializer(serializers.Serializer):
     current_value = serializers.DecimalField(max_digits=10, decimal_places=2)
     default_value = serializers.DecimalField(max_digits=10, decimal_places=2)
-    modifiers = serializers.ListField()
+    modifiers = ModifiersSerializer(many=True)
 
 
 class SeatsTypesSerializer(serializers.Serializer):
@@ -63,7 +75,6 @@ class SeatsTypesSerializer(serializers.Serializer):
 
 class PaymentSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    name = serializers.CharField()
     type = serializers.CharField()
 
 
@@ -85,7 +96,10 @@ class TicketsSerializer(serializers.Serializer):
             sale_start_date=show['sale_start_date'],
             sale_finish_date=show['sale_finish_date'],
             payments=[
-                {'id': payment['id'], 'name': payment['name'], 'type': payment['handler']}
+                {
+                    'id': payment['id'],
+                    'type': 'invoice' if payment['handler'] == 'invoice' else 'card'
+                }
                 for payment in show_data['payments']
                 if payment['is_active']
             ],
@@ -101,13 +115,13 @@ class TicketsSerializer(serializers.Serializer):
                             {
                                 'type': modifier['type'],
                                 'sales_count_value': int(modifier['sales_count_value']),
-                                'value': float(modifier['value'])
+                                'value': modifier['value']  # Decimal
                             } if modifier['type'] == 'sales_count'
                             else {
                                 'type': modifier['type'],
                                 'from': modifier.get('active_from'),
                                 'to': modifier.get('active_to'),
-                                'value': float(modifier['value'])
+                                'value': modifier['value']
                             }  # if modifier['type'] == 'date'
                             for modifier in
                             prices_dict[zone['zone_id']]['modifiers']
