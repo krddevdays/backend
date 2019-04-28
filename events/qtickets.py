@@ -49,8 +49,8 @@ QTicketsInfo = QTickets()
 
 
 class PriceSerializer(serializers.Serializer):
-    current_value = serializers.IntegerField()
-    default_value = serializers.IntegerField()
+    current_value = serializers.FloatField()
+    default_value = serializers.FloatField()
     modifiers = serializers.ListField()
 
 
