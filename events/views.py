@@ -27,8 +27,8 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
             seats_data = QTicketsInfo.get_seats_data(event_data['shows'][0]['id'])
             tickets = TicketsSerializer(data={'event_data': event_data, 'seats_data': seats_data})
 
-            if tickets.is_valid(raise_exception=True):
-                return Response(data=tickets.data)
+            tickets.is_valid(raise_exception=True)
+            return Response(data=tickets.data)
 
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):
