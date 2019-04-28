@@ -50,6 +50,8 @@ QTicketsInfo = QTickets()
 
 class PriceSerializer(serializers.Serializer):
     current_value = serializers.IntegerField()
+    default_value = serializers.IntegerField()
+    modifiers = serializers.ListField()
 
 
 class SeatsTypesSerializer(serializers.Serializer):
@@ -71,6 +73,13 @@ class TicketsSerializer(serializers.Serializer):
         seats_data = kwargs['data'].get('seats_data')
         show = show_data['shows'][0]
 
+        prices_dict = dict()
+        for zone in show['scheme_properties']['zones']:
+            for p in show['prices']:
+                if str(p['id']) == show['scheme_properties']['zones'][zone]['price_id']:
+                    prices_dict[zone] = p
+                    continue
+
         prepared_data = dict(
             is_active=show_data['is_active'] and show['is_active'],
             sale_start_date=show['sale_start_date'],
@@ -86,7 +95,23 @@ class TicketsSerializer(serializers.Serializer):
                     'name': seats['name'],
                     'disabled': seats['free_quantity'] == 0,
                     'price': {
-                        'current_value': seats['price']
+                        'current_value': seats['price'],
+                        'default_value': prices_dict[zone['zone_id']]['default_price'],
+                        'modifiers': [
+                            {
+                                'type': modifier['type'],
+                                'sales_count_value': int(modifier['sales_count_value']),
+                                'value': float(modifier['value'])
+                            } if modifier['type'] == 'sales_count'
+                            else {
+                                'type': modifier['type'],
+                                'from': modifier['active_form'],
+                                'to': modifier['active_to'],
+                                'value': float(modifier['value'])
+                            }  # if modifier['type'] == 'date'
+                            for modifier in
+                            prices_dict[zone['zone_id']]['modifiers']
+                        ]
                     }
                 }
                 for zone in seats_data.values()
