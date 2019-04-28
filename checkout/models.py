@@ -4,19 +4,24 @@ from django.db import models
 from events.models import Event
 
 
-class Order(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.PROTECT)
+class ContactsMixin(models.Model):
     email = models.EmailField()
-    full_name = models.CharField(max_length=150)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=150)
+
+    class Meta:
+        abstract = True
+
+
+class Order(ContactsMixin, models.Model):
+    event = models.ForeignKey(Event, on_delete=models.PROTECT)
 
     def __str__(self):
         return f'{self.id} ({self.email})'
 
 
-class Ticket(models.Model):
+class Ticket(ContactsMixin, models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    email = models.EmailField()
-    full_name = models.CharField(max_length=150)
     form = JSONField(default=dict)
 
     class Meta:
