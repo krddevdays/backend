@@ -23,7 +23,8 @@ class EventAdmin(admin.ModelAdmin):
     inlines = (ActivityInline,)
     fieldsets = (
         ('', {'fields': (('name', 'venue'),)}),
-        ('', {'fields': (('start_date', 'finish_date'),)})
+        ('', {'fields': (('start_date', 'finish_date'),)}),
+        ('QTicket system', {'fields': ('external_id',)})
     )
 
 

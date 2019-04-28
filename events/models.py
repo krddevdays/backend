@@ -1,7 +1,9 @@
+from django import forms
 from django.db import models
 from django_enumfield import enum
 
 from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity
+from .qtickets import check_qtickets_event
 
 
 class Venue(models.Model):
@@ -27,9 +29,19 @@ class Event(models.Model):
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
     venue = models.ForeignKey(Venue, on_delete=models.PROTECT)
+    external_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.name}, {self.start_date:%d.%m.%Y}'
+
+    def clean(self):
+        if self.external_id is not None:
+            try:
+                check_qtickets_event(self.external_id)
+            except Exception as e:
+                raise forms.ValidationError({
+                    'external_id': forms.ValidationError(str(e))
+                })
 
 
 class Activity(models.Model):
