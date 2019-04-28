@@ -51,6 +51,7 @@ QTicketsInfo = QTickets()
 class SeatsTypesSerializer(serializers.Serializer):
     id = serializers.CharField()
     name = serializers.CharField()
+    disabled = serializers.BooleanField()
 
 
 class PaymentSerializer(serializers.Serializer):
@@ -77,7 +78,8 @@ class TicketsSerializer(serializers.Serializer):
             types=[
                 {
                     'id': seats['seat_id'],
-                    'name': seats['name']
+                    'name': seats['name'],
+                    'disabled': seats['free_quantity'] == 0
                 }
                 for zone in seats_data.values()
                 for seats in zone['seats'].values()
