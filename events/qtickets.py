@@ -32,7 +32,7 @@ class QTickets:
         )['data']
 
     def get_seats_data(self, show_id: str):
-        return self._make_request('GET', self.get_seats_url(show_id), json={
+        return self._make_request('GET', f'{self.API_endpoint}shows/{show_id}/seats', json={
             "select": [
                 "name",
                 "free_quantity",
@@ -40,9 +40,6 @@ class QTickets:
                 "disabled"
             ]
         })['data']
-
-    def get_seats_url(self, show_id) -> str:
-        return f'{self.API_endpoint}shows/{show_id}/seats'
 
 
 QTicketsInfo = QTickets()
