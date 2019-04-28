@@ -48,6 +48,11 @@ class QTickets:
 QTicketsInfo = QTickets()
 
 
+class SeatsTypesSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    name = serializers.CharField()
+
+
 class PaymentSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
@@ -59,13 +64,25 @@ class TicketsSerializer(serializers.Serializer):
         show_data = kwargs['data'].get('event_data')
         seats_data = kwargs['data'].get('seats_data')
         show = show_data['shows'][0]
+
         prepared_data = dict(
             is_active=show_data['is_active'] and show['is_active'],
             sale_start_date=show['sale_start_date'],
             sale_finish_date=show['sale_finish_date'],
-            payments=[{'id': payment['id'], 'name': payment['name'], 'type': payment['handler']}
-                      for payment in show_data['payments']
-                      if payment['is_active']]
+            payments=[
+                {'id': payment['id'], 'name': payment['name'], 'type': payment['handler']}
+                for payment in show_data['payments']
+                if payment['is_active']
+            ],
+            types=[
+                {
+                    'id': seats['seat_id'],
+                    'name': seats['name']
+                }
+                for zone in seats_data.values()
+                for seats in zone['seats'].values()
+                if not seats['disabled']
+            ]
         )
         super().__init__(data=prepared_data)
 
@@ -73,3 +90,4 @@ class TicketsSerializer(serializers.Serializer):
     sale_start_date = serializers.DateTimeField(allow_null=True)
     sale_finish_date = serializers.DateTimeField(allow_null=True)
     payments = PaymentSerializer(many=True)
+    types = SeatsTypesSerializer(many=True)
