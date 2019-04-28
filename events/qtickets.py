@@ -76,6 +76,12 @@ class PaymentSerializer(serializers.Serializer):
 
 
 class TicketsSerializer(serializers.Serializer):
+    is_active = serializers.BooleanField()
+    sale_start_date = serializers.DateTimeField(allow_null=True)
+    sale_finish_date = serializers.DateTimeField(allow_null=True)
+    payments = PaymentSerializer(many=True)
+    types = SeatsTypesSerializer(many=True)
+
     def __init__(self, **kwargs):
         show_data = kwargs['data'].get('event_data')
         seats_data = kwargs['data'].get('seats_data')
@@ -131,9 +137,3 @@ class TicketsSerializer(serializers.Serializer):
             ]
         )
         super().__init__(data=prepared_data)
-
-    is_active = serializers.BooleanField()
-    sale_start_date = serializers.DateTimeField(allow_null=True)
-    sale_finish_date = serializers.DateTimeField(allow_null=True)
-    payments = PaymentSerializer(many=True)
-    types = SeatsTypesSerializer(many=True)
