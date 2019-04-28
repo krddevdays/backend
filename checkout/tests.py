@@ -1,10 +1,12 @@
 from django.apps import apps
+from django.conf import settings
 from django.test import TestCase
 from rest_framework.reverse import reverse
 
 from checkout.apps import CheckoutConfig
 from checkout.factories import OrderFactory, TicketFactory
 from events.factories import EventFactory
+from users.factories import UserFactory
 
 
 class CheckoutTestCase(TestCase):
@@ -12,10 +14,37 @@ class CheckoutTestCase(TestCase):
     def setUpTestData(cls):
         cls.event = EventFactory()
         cls.order = OrderFactory()
+        cls.ticket = TicketFactory()
 
     def test_apps(self):
         self.assertEqual(CheckoutConfig.name, 'checkout')
         self.assertEqual(apps.get_app_config('checkout').name, 'checkout')
+
+    def test_my_orders(self):
+        user = UserFactory()
+        self.client.force_login(user, settings.AUTHENTICATION_BACKENDS[0])
+        response = self.client.get(reverse('order-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+        user = UserFactory(email=self.order.email)
+        self.client.force_login(user, settings.AUTHENTICATION_BACKENDS[0])
+        response = self.client.get(reverse('order-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
+
+    def test_my_tickets(self):
+        user = UserFactory()
+        self.client.force_login(user, settings.AUTHENTICATION_BACKENDS[0])
+        response = self.client.get(reverse('ticket-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+        user = UserFactory(email=self.ticket.email)
+        self.client.force_login(user, settings.AUTHENTICATION_BACKENDS[0])
+        response = self.client.get(reverse('ticket-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
 
     def test_create_order(self):
         def append_base_info(data, klass):

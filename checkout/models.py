@@ -5,7 +5,7 @@ from events.models import Event
 
 
 class ContactsMixin(models.Model):
-    email = models.EmailField()
+    email = models.EmailField(db_index=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=150)
 
