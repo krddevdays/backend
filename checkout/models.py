@@ -21,7 +21,7 @@ class Order(ContactsMixin, models.Model):
 
 
 class Ticket(ContactsMixin, models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='tickets')
     form = JSONField(default=dict)
 
     class Meta:
