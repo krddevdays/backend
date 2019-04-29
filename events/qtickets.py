@@ -50,7 +50,7 @@ QTicketsInfo = QTickets()
 class ModifiersSerializer(serializers.Serializer):
     type = serializers.CharField()
     value = serializers.DecimalField(max_digits=10, decimal_places=2)
-    sales_count_value = serializers.IntegerField(required=False)
+    sales_count = serializers.IntegerField(required=False)
     active_from = serializers.DateTimeField(required=False)
     to = serializers.DateTimeField(required=False)
 
@@ -95,7 +95,7 @@ class TicketsSerializer(serializers.Serializer):
             return [
                 {
                     'type': modifier['type'],
-                    'sales_count_value': int(modifier['sales_count_value']),
+                    'sales_count': int(modifier['sales_count_value']),
                     'value': modifier['value']  # Decimal
                 } if modifier['type'] == 'sales_count'
                 else {
