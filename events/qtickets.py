@@ -83,6 +83,49 @@ class TicketsSerializer(serializers.Serializer):
     types = SeatsTypesSerializer(many=True)
 
     def __init__(self, **kwargs):
+        def extract_payments():
+            return [
+                {
+                    'id': payment['id'],
+                    'type': 'invoice' if payment['handler'] == 'invoice' else 'card'
+                }
+                for payment in show_data['payments']
+                if payment['is_active']
+            ]
+
+        def extract_modifiers(modifiers):
+            return [
+                {
+                    'type': modifier['type'],
+                    'sales_count_value': int(modifier['sales_count_value']),
+                    'value': modifier['value']  # Decimal
+                } if modifier['type'] == 'sales_count'
+                else {
+                    'type': modifier['type'],
+                    'from': modifier.get('active_from'),
+                    'to': modifier.get('active_to'),
+                    'value': modifier['value']
+                }  # if modifier['type'] == 'date'
+                for modifier in modifiers
+            ]
+
+        def extract_types():
+            return [
+                {
+                    'id': seats['seat_id'],
+                    'name': seats['name'],
+                    'disabled': seats['free_quantity'] == 0,
+                    'price': {
+                        'current_value': seats['price'],
+                        'default_value': prices_dict[_zone['zone_id']]['default_price'],
+                        'modifiers': extract_modifiers(prices_dict[_zone['zone_id']]['modifiers'])
+                    }
+                }
+                for _zone in seats_data.values()
+                for seats in _zone['seats'].values()
+                if not seats['disabled']
+            ]
+
         show_data = kwargs['data'].get('event_data')
         seats_data = kwargs['data'].get('seats_data')
         show = show_data['shows'][0]
@@ -98,42 +141,7 @@ class TicketsSerializer(serializers.Serializer):
             is_active=show_data['is_active'] and show['is_active'],
             sale_start_date=show['sale_start_date'],
             sale_finish_date=show['sale_finish_date'],
-            payments=[
-                {
-                    'id': payment['id'],
-                    'type': 'invoice' if payment['handler'] == 'invoice' else 'card'
-                }
-                for payment in show_data['payments']
-                if payment['is_active']
-            ],
-            types=[
-                {
-                    'id': seats['seat_id'],
-                    'name': seats['name'],
-                    'disabled': seats['free_quantity'] == 0,
-                    'price': {
-                        'current_value': seats['price'],
-                        'default_value': prices_dict[zone['zone_id']]['default_price'],
-                        'modifiers': [
-                            {
-                                'type': modifier['type'],
-                                'sales_count_value': int(modifier['sales_count_value']),
-                                'value': modifier['value']  # Decimal
-                            } if modifier['type'] == 'sales_count'
-                            else {
-                                'type': modifier['type'],
-                                'from': modifier.get('active_from'),
-                                'to': modifier.get('active_to'),
-                                'value': modifier['value']
-                            }  # if modifier['type'] == 'date'
-                            for modifier in
-                            prices_dict[zone['zone_id']]['modifiers']
-                        ]
-                    }
-                }
-                for zone in seats_data.values()
-                for seats in zone['seats'].values()
-                if not seats['disabled']
-            ]
+            payments=extract_payments(),
+            types=extract_types()
         )
         super().__init__(data=prepared_data)
