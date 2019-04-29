@@ -51,12 +51,8 @@ class ModifiersSerializer(serializers.Serializer):
     type = serializers.CharField()
     value = serializers.DecimalField(max_digits=10, decimal_places=2)
     sales_count_value = serializers.IntegerField(required=False)
-    frm = serializers.DateTimeField(required=False)
+    active_from = serializers.DateTimeField(required=False)
     to = serializers.DateTimeField(required=False)
-
-
-ModifiersSerializer._declared_fields['from'] = ModifiersSerializer._declared_fields['frm']
-del ModifiersSerializer._declared_fields['frm']
 
 
 class PriceSerializer(serializers.Serializer):
@@ -104,7 +100,7 @@ class TicketsSerializer(serializers.Serializer):
                 } if modifier['type'] == 'sales_count'
                 else {
                     'type': modifier['type'],
-                    'from': modifier.get('active_from'),
+                    'active_from': modifier.get('active_from'),
                     'to': modifier.get('active_to'),
                     'value': modifier['value']
                 }  # if modifier['type'] == 'date'
