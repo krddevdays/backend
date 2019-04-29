@@ -101,7 +101,7 @@ class TicketsSerializer(serializers.Serializer):
                 else {
                     'type': modifier['type'],
                     'active_from': modifier.get('active_from'),
-                    'to': modifier.get('active_to'),
+                    'active_to': modifier.get('active_to'),
                     'value': modifier['value']
                 }  # if modifier['type'] == 'date'
                 for modifier in modifiers
