@@ -23,7 +23,9 @@ class QTickets:
         self.session.head(url=self.get_event_url(external_id)).raise_for_status()
 
     def _make_request(self, method: str, url: str, **kwargs):
-        return self.session.request(method=method, url=url, **kwargs).json()
+        req = self.session.request(method=method, url=url, **kwargs)
+        req.raise_for_status()
+        return req.json()
 
     def get_event_data(self, external_id: int):
         return self._make_request(
