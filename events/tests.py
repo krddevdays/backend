@@ -15,8 +15,9 @@ class EventsTestCase(TestCase):
         cls.event = EventFactory()
 
     def _check_event(self, data: dict, event: EventFactory):
-        self.assertEqual(data['id'], event.id)
-        self.assertEqual(data['name'], event.name)
+        for field in ('id', 'name', 'short_description', 'full_description', 'ticket_description',
+                  'image', 'image_vk', 'image_facebook'):
+            self.assertEqual(data[field], getattr(event, field))
         self.assertEqual(data['start_date'], event.start_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
         self.assertEqual(data['finish_date'], event.finish_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
 

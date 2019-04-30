@@ -22,8 +22,9 @@ class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'venue')
     inlines = (ActivityInline,)
     fieldsets = (
-        ('', {'fields': (('name', 'venue'),)}),
-        ('', {'fields': (('start_date', 'finish_date'),)}),
+        ('', {'fields': (('name', 'venue'), ('start_date', 'finish_date'))}),
+        ('Descriptions', {'fields': ('short_description', 'full_description', 'ticket_description')}),
+        ('Images', {'fields': ('image', 'image_vk', 'image_facebook')}),
         ('QTicket system', {'fields': ('external_id',)})
     )
 
