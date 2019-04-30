@@ -16,6 +16,7 @@ django-nose = "*"
 requests = "*"
 django-cors-headers = "*"
 coreapi = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.7"
