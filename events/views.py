@@ -8,7 +8,7 @@ from .serializers import EventSerializer, ActivitySerializer
 
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Event.objects.all()
+    queryset = Event.objects.order_by('-start_date').all()
     serializer_class = EventSerializer
 
     @action(detail=True)

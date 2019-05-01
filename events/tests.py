@@ -12,7 +12,8 @@ from events.interfaces import ActivityType, WelcomeActivity
 class EventsTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.event = EventFactory()
+        date = datetime.datetime(2019, 1, 1, tzinfo=datetime.timezone.utc)
+        cls.event = EventFactory(start_date=date)
 
     def _check_event(self, data: dict, event: EventFactory):
         for field in ('id', 'name', 'short_description', 'full_description', 'ticket_description',
@@ -49,6 +50,16 @@ class EventsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self._check_event(data, self.event)
+
+    def test_ordering(self):
+        first_event = EventFactory(start_date=datetime.datetime(2019, 2, 1, tzinfo=datetime.timezone.utc))
+        second_event = EventFactory(start_date=datetime.datetime(2019, 3, 1, tzinfo=datetime.timezone.utc))
+        response = self.client.get(reverse('event-list'))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 3)
+        ids = [event['id'] for event in data]
+        self.assertEqual(ids, [second_event.id, first_event.id, self.event.id])
 
     def test_activities(self):
         activity = ActivityFactory(event=self.event, type=ActivityType.WELCOME)
