@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.widgets import AdminTextareaWidget
 from django.utils.safestring import mark_safe
 
 from .models import Event, Zone, Activity, Venue
@@ -22,10 +23,16 @@ class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'venue')
     inlines = (ActivityInline,)
     fieldsets = (
-        ('', {'fields': (('name', 'venue'),)}),
-        ('', {'fields': (('start_date', 'finish_date'),)}),
+        ('', {'fields': (('name', 'venue'), ('start_date', 'finish_date'))}),
+        ('Descriptions', {'fields': ('short_description', 'full_description', 'ticket_description')}),
+        ('Images', {'fields': ('image', 'image_vk', 'image_facebook')}),
         ('QTicket system', {'fields': ('external_id',)})
     )
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name in ('short_description', 'ticket_description'):
+            kwargs['widget'] = AdminTextareaWidget
+        return super(EventAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @admin.register(Activity)

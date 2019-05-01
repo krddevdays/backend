@@ -12,11 +12,13 @@ from events.interfaces import ActivityType, WelcomeActivity
 class EventsTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.event = EventFactory()
+        date = datetime.datetime(2019, 1, 1, tzinfo=datetime.timezone.utc)
+        cls.event = EventFactory(start_date=date)
 
     def _check_event(self, data: dict, event: EventFactory):
-        self.assertEqual(data['id'], event.id)
-        self.assertEqual(data['name'], event.name)
+        for field in ('id', 'name', 'short_description', 'full_description', 'ticket_description',
+                  'image', 'image_vk', 'image_facebook'):
+            self.assertEqual(data[field], getattr(event, field))
         self.assertEqual(data['start_date'], event.start_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
         self.assertEqual(data['finish_date'], event.finish_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
 
@@ -48,6 +50,30 @@ class EventsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self._check_event(data, self.event)
+
+    def test_ordering(self):
+        first_event = EventFactory(start_date=datetime.datetime(2019, 2, 1, tzinfo=datetime.timezone.utc))
+        second_event = EventFactory(start_date=datetime.datetime(2019, 3, 1, tzinfo=datetime.timezone.utc))
+        response = self.client.get(reverse('event-list'))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 3)
+        ids = [event['id'] for event in data]
+        self.assertEqual(ids, [second_event.id, first_event.id, self.event.id])
+
+    def test_search(self):
+        response = self.client.get(reverse('event-list'), data={'search': self.event.name[:4]})
+        data = response.json()
+        self.assertEqual(len(data), 1)
+
+        response = self.client.get(reverse('event-list'), data={'search': 'some_unique_string'})
+        data = response.json()
+        self.assertEqual(len(data), 0)
+
+    def test_filter(self):
+        response = self.client.get(reverse('event-list'), data={'date_from': '2019-01-01'})
+        data = response.json()
+        self.assertEqual(len(data), 0)
 
     def test_activities(self):
         activity = ActivityFactory(event=self.event, type=ActivityType.WELCOME)

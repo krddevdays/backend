@@ -75,6 +75,11 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+# explicitly set format because .isoformat() can return value without microseconds
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ'
+}
+
 STATIC_URL = '/static/'
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -83,4 +88,4 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 QTICKETS_ENDPOINT = os.environ.get('QTICKETS_ENDPOINT', '')
 QTICKETS_TOKEN = os.environ.get('QTICKETS_TOKEN', '')
 
-CORS_ORIGIN_ALLOW_ALL=True
+CORS_ORIGIN_ALLOW_ALL = True
