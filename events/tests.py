@@ -61,6 +61,20 @@ class EventsTestCase(TestCase):
         ids = [event['id'] for event in data]
         self.assertEqual(ids, [second_event.id, first_event.id, self.event.id])
 
+    def test_search(self):
+        response = self.client.get(reverse('event-list'), data={'search': self.event.name[:4]})
+        data = response.json()
+        self.assertEqual(len(data), 1)
+
+        response = self.client.get(reverse('event-list'), data={'search': 'some_unique_string'})
+        data = response.json()
+        self.assertEqual(len(data), 0)
+
+    def test_filter(self):
+        response = self.client.get(reverse('event-list'), data={'date_from': '2019-01-01'})
+        data = response.json()
+        self.assertEqual(len(data), 0)
+
     def test_activities(self):
         activity = ActivityFactory(event=self.event, type=ActivityType.WELCOME)
         ActivityFactory(event=self.event, type=ActivityType.TALK)

@@ -1,5 +1,7 @@
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet, DateTimeFilter
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
 from .models import Event, Activity
@@ -7,9 +9,21 @@ from .qtickets import QTicketsInfo, TicketsSerializer
 from .serializers import EventSerializer, ActivitySerializer
 
 
+class EventFilter(FilterSet):
+    date_from = DateTimeFilter(field_name="start_date", lookup_expr='gt')
+    date_to = DateTimeFilter(field_name="start_date", lookup_expr='lt')
+
+    class Meta:
+        model = Event
+        fields = ('date_from', 'date_to')
+
+
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Event.objects.order_by('-start_date').all()
     serializer_class = EventSerializer
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    filterset_class = EventFilter
+    search_fields = ('name',)
 
     @action(detail=True)
     def activities(self, *args, **kwargs):
