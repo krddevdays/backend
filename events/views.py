@@ -49,14 +49,17 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
 
         current_show = event_info['shows'][0]
         if (
-                not event_info['is_active']
-                or not current_show['is_active']
-                or current_show['sale_start_date'] is None
-                or dateutil.parser.parse(current_show['sale_start_date']) > timezone.now()
-                or dateutil.parser.parse(current_show['sale_finish_date']) < timezone.now()
+                not event_info['is_active']  # эвент должен быть активен
+                or not current_show['is_active']  # show должно быть активным
+                or current_show['sale_start_date'] is None  # старт продаж не должен быть null
+                or dateutil.parser.parse(current_show['sale_start_date']) > timezone.now()  # старт продаж больше чем текущ время
+                or dateutil.parser.parse(current_show['sale_finish_date']) < timezone.now()  # и конец продаж меньще чем текущ вр
                 or data['payment_id'] not in [p['id'] for p in event_info['payments']]
         ):
             return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
+        if event_info['payments'][0]['handler'] == 'invoice' and {'inn', 'legal_name'} - set(data):
+            return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
+
         return Response(data={})
 
 
