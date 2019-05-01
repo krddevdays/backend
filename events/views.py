@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from .models import Event, Activity
 from .qtickets import QTicketsInfo, TicketsSerializer
-from .serializers import EventSerializer, ActivitySerializer
+from .serializers import EventSerializer, ActivitySerializer, QTicketsOrderSerializer
 
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
@@ -29,6 +29,14 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
 
             tickets.is_valid(raise_exception=True)
             return Response(data=tickets.data)
+
+    @action(methods=['POST'], detail=True, serializer_class=QTicketsOrderSerializer)
+    def order(self, *args, **kwargs):
+        event = self.get_object()
+        if event.external_id is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        order = self.get_serializer(data=self.request.data)
+        order.is_valid(raise_exception=True)
 
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):

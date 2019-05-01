@@ -67,6 +67,26 @@ class EventsTestCase(TestCase):
     def test_tickets(self):
         pass
 
+    def test_order(self):
+        url = reverse('event-order', args=(self.event.id,))
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 404)
+        self.event.external_id = 2
+        self.event.save()
+        good_request_basic = {'first_name': 'Alex',
+                              'last_name': 'Johns',
+                              'email': 'a@a.ru',
+                              'phone': '+79631000000',
+                              'payment_id': '123',
+                              }
+        good_request_inn = good_request_basic.copy()
+        good_request_inn.update({'inn': '7810671063', 'legal_name': 'Рога и Копыта'})
+        bad_phone_request = good_request_basic.copy()
+        bad_phone_request.update({'phone': '+7944123123'})
+        request = self.client.post(url, data=bad_phone_request)
+        self.assertEqual(request.status_code, 400)
+        self.assertIn('phone', request.json())
+
     def test_str(self):
         venue = VenueFactory(name='venue name', address='address')
         self.assertEqual(str(venue), 'venue name, address')

@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'phonenumber_field',
 
     'users',
     'events',
@@ -83,4 +84,4 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 QTICKETS_ENDPOINT = os.environ.get('QTICKETS_ENDPOINT', '')
 QTICKETS_TOKEN = os.environ.get('QTICKETS_TOKEN', '')
 
-CORS_ORIGIN_ALLOW_ALL=True
+CORS_ORIGIN_ALLOW_ALL = True

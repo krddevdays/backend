@@ -16,6 +16,8 @@ django-nose = "*"
 requests = "*"
 django-cors-headers = "*"
 coreapi = "*"
+django-phonenumber-field = "*"
+phonenumberslite = "*"
 
 [requires]
 python_version = "3.7"
