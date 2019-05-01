@@ -76,10 +76,10 @@ def check_inn(inn):
 
 
 class QTicketsOrderSerializer(serializers.Serializer):
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
-    email = serializers.EmailField()
-    phone = PhoneNumberField()
+    first_name = serializers.CharField(help_text='Имя')
+    last_name = serializers.CharField(help_text='Фамилия')
+    email = serializers.EmailField(help_text='Адрес электронной почты')
+    phone = PhoneNumberField(help_text='Номер телефона', required=False)
     payment_id = serializers.CharField()
 
     inn = serializers.CharField(validators=[check_inn, ], required=False)

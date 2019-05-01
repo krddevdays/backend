@@ -1,3 +1,5 @@
+import dateutil.parser
+from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -35,8 +37,26 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         event = self.get_object()
         if event.external_id is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        try:
+            event_info = QTicketsInfo.get_event_data(event.external_id)
+            seats = QTicketsInfo.get_seats_data(select_fields=["free_quantity", "disabled"], show_id=event_info['shows'][0]['id'])
+        except Exception:
+            return Response(status=502)
+
         order = self.get_serializer(data=self.request.data)
         order.is_valid(raise_exception=True)
+        data = order.data
+        current_show = event_info['shows'][0]
+
+        if (
+                not event_info['is_active']
+                or not current_show['is_active']
+                or current_show['sale_start_date'] is None
+                or dateutil.parser.parse(current_show['sale_start_date']) > timezone.now()
+                or dateutil.parser.parse(current_show['sale_finish_date']) < timezone.now()
+        ):
+            return Response(data={'error': 'Event is not active'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(data={})
 
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):
