@@ -46,16 +46,17 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         order = self.get_serializer(data=self.request.data)
         order.is_valid(raise_exception=True)
         data = order.data
-        current_show = event_info['shows'][0]
 
+        current_show = event_info['shows'][0]
         if (
                 not event_info['is_active']
                 or not current_show['is_active']
                 or current_show['sale_start_date'] is None
                 or dateutil.parser.parse(current_show['sale_start_date']) > timezone.now()
                 or dateutil.parser.parse(current_show['sale_finish_date']) < timezone.now()
+                or data['payment_id'] not in [p['id'] for p in event_info['payments']]
         ):
-            return Response(data={'error': 'Event is not active'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(data={})
 
 
