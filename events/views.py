@@ -58,7 +58,8 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         ):
             return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
         if event_info['payments'][0]['handler'] == 'invoice' and {'inn', 'legal_name'} - set(data):
-            return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'error': 'Неверные данные для зказа, ИНН и наименование организации не указанны'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         return Response(data={})
 
