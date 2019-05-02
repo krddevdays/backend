@@ -1,6 +1,6 @@
 from collections import Counter
 
-import dateutil
+import dateutil.parser
 from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -53,9 +53,12 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         if (
                 not event_info['is_active']  # эвент должен быть активен
                 or not current_show['is_active']  # show должно быть активным
-                or current_show['sale_start_date'] is None  # старт продаж не должен быть null
-                or dateutil.parser.parse(current_show['sale_start_date']) > timezone.now()  # старт продаж больше чем текущ время
-                or dateutil.parser.parse(current_show['sale_finish_date']) < timezone.now()  # и конец продаж меньще чем текущ вр
+                or
+                (
+                        current_show['sale_start_date'] is not None
+                        and dateutil.parser.parse(current_show['sale_start_date']) >= timezone.now()
+                )
+                or dateutil.parser.parse(current_show['sale_finish_date']) < timezone.now()
                 or data['payment_id'] not in [p['id'] for p in event_info['payments']]
         ):
             return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
@@ -84,7 +87,35 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
             ):
                 return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(data={})
+        order_body = {
+            'email': data['email'],
+            'name': data['first_name'],
+            'surname': data['last_name'],
+            'phone': data.get('phone', ''),
+            'host': self.request.META['HTTP_HOST'],
+            'payment_id': data['payment_id'],
+            'event_id': event.external_id,
+            'baskets': [
+                {
+                    'show_id': current_show['id'],
+                    'seat_id': basket['type_id'],
+                    'client_email': basket['email'],
+                    'client_name': basket['first_name'],
+                    'client_surname': basket['last_name']
+
+                }
+                for basket
+                in data['tickets']
+            ]
+        }
+        juridicial = False
+        if 'inn' in data:
+            order_body.update({'legal_name': data['legal_name'], 'inn': data['inn']})
+            juridicial = True
+
+        payment_url = QTicketsInfo.get_order_tickets_url(tickets_data=order_body, juridicial=juridicial)
+
+        return Response(data={'url': payment_url})
 
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):
