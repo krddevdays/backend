@@ -75,12 +75,20 @@ def check_inn(inn):
     return inn
 
 
+class TicketsSerializer(serializers.Serializer):
+    type_id = serializers.CharField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email = serializers.EmailField()
+
+
 class QTicketsOrderSerializer(serializers.Serializer):
     first_name = serializers.CharField(help_text='Имя')
     last_name = serializers.CharField(help_text='Фамилия')
     email = serializers.EmailField(help_text='Адрес электронной почты')
     phone = PhoneNumberField(help_text='Номер телефона', required=False)
     payment_id = serializers.CharField()
+    tickets = TicketsSerializer(many=True)
 
     inn = serializers.CharField(validators=[check_inn, ], required=False)
     legal_name = serializers.CharField(required=False)

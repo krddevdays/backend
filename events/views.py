@@ -57,7 +57,11 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
                 or data['payment_id'] not in [p['id'] for p in event_info['payments']]
         ):
             return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
-        if event_info['payments'][0]['handler'] == 'invoice' and {'inn', 'legal_name'} - set(data):
+        try:
+            payment = [p for p in event_info['payments'] if p['id'] == data['payment_id']][0]
+        except IndexError:
+            return Response(data={'error': 'Неверный id платежа'})
+        if payment['handler'] == 'invoice' and {'inn', 'legal_name'} - set(data):
             return Response(data={'error': 'Неверные данные для зказа, ИНН и наименование организации не указанны'},
                             status=status.HTTP_400_BAD_REQUEST)
 
