@@ -81,7 +81,7 @@ class ModifiersSerializer(serializers.Serializer):
     value = serializers.DecimalField(max_digits=10, decimal_places=2)
     sales_count = serializers.IntegerField(required=False)
     active_from = serializers.DateTimeField(required=False)
-    to = serializers.DateTimeField(required=False)
+    active_to = serializers.DateTimeField(required=False)
 
 
 class PriceSerializer(serializers.Serializer):
