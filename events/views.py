@@ -41,7 +41,11 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         try:
             event_info = QTicketsInfo.get_event_data(event.external_id)
-            seats = QTicketsInfo.get_seats_data(select_fields=["free_quantity", "disabled"], show_id=event_info['shows'][0]['id'])
+            seats = QTicketsInfo.get_seats_data(
+                select_fields=["free_quantity", "disabled"],
+                show_id=event_info['shows'][0]['id'],
+                flat=True
+            )
         except Exception:
             return Response(status=502)
 
@@ -80,9 +84,8 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         for ticket_request in data['tickets']:
             if (
                     ticket_request['type_id'] not in seats
-                    or [i for i in seats[ticket_request['type_id']]['seats'].values()][0]['disabled']
-                    or seats_by_type[ticket_request['type_id']] >
-                    [i for i in seats[ticket_request['type_id']]['seats'].values()][0]['free_quantity']
+                    or seats[ticket_request['type_id']]['disabled']
+                    or seats_by_type[ticket_request['type_id']] > seats[ticket_request['type_id']]['free_quantity']
                     # fixme: проверка проходит много раз, а должна быть одна и сразу
             ):
                 return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
