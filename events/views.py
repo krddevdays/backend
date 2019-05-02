@@ -113,7 +113,10 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
             order_body.update({'legal_name': data['legal_name'], 'inn': data['inn']})
             juridicial = True
 
-        payment_url = QTicketsInfo.get_order_tickets_url(tickets_data=order_body, juridicial=juridicial)
+        try:
+            payment_url = QTicketsInfo.get_order_tickets_url(tickets_data=order_body, juridicial=juridicial)
+        except Exception as e:
+            return Response(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(data={'url': payment_url})
 
