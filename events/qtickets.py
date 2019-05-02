@@ -33,14 +33,15 @@ class QTickets:
             url=self.get_event_url(external_id)
         )['data']
 
-    def get_seats_data(self, show_id: str, select_fields=None):
+    def get_seats_data(self, show_id: str, select_fields=None, flat: bool = False):
         select_fields = select_fields or [
             "name",
             "free_quantity",
             "price",
             "disabled"
         ]
-        return self._make_request('GET', f'{self.API_endpoint}shows/{show_id}/seats', json={"select": select_fields})['data']
+        result_json = dict(select=select_fields, flat=flat)
+        return self._make_request('GET', f'{self.API_endpoint}shows/{show_id}/seats', json=result_json)['data']
 
     def get_order_tickets_url(self, tickets_data: dict, juridicial: bool = True) -> str:
         request_body = {
