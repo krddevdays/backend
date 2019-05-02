@@ -40,7 +40,7 @@ class ActivityAdmin(admin.ModelAdmin):
     list_display = ('id', 'event', 'type', 'zone', 'start_date', 'finish_date')
     list_filter = ('event', 'zone', 'type')
     fieldsets = (
-        ('', {'fields': (('event', 'zone', 'type'), 'thing', ('start_date', 'finish_date'))}),
+        ('', {'fields': (('event', 'zone', 'type'), ('start_date', 'finish_date'))}),
     )
 
     def get_queryset(self, request):
