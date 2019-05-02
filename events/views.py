@@ -1,4 +1,6 @@
-import dateutil.parser
+from collections import Counter
+
+import dateutil
 from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -64,6 +66,23 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         if payment['handler'] == 'invoice' and {'inn', 'legal_name'} - set(data):
             return Response(data={'error': 'Неверные данные для зказа, ИНН и наименование организации не указанны'},
                             status=status.HTTP_400_BAD_REQUEST)
+
+        # email должны быть уникальны в рамках tickets из данного запроса
+        tickets_emails = [ticket['email'] for ticket in data['tickets']]
+        if len(tickets_emails) > len(set(tickets_emails)):
+            return Response(data={'error': 'Адреса электронной почты не уникальны'})
+
+        seats_by_type = Counter([el['type_id'] for el in data['tickets']])
+
+        for ticket_request in data['tickets']:
+            if (
+                    ticket_request['type_id'] not in seats
+                    or [i for i in seats[ticket_request['type_id']]['seats'].values()][0]['disabled']
+                    or seats_by_type[ticket_request['type_id']] >
+                    [i for i in seats[ticket_request['type_id']]['seats'].values()][0]['free_quantity']
+                    # fixme: проверка проходит много раз, а должна быть одна и сразу
+            ):
+                return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(data={})
 
