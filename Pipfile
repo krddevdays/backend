@@ -18,6 +18,7 @@ django-cors-headers = "*"
 coreapi = "*"
 django-phonenumber-field = "*"
 phonenumberslite = "*"
+python-dateutil = "*"
 
 [requires]
 python_version = "3.7"
