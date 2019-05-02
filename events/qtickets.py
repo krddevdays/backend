@@ -50,8 +50,7 @@ class QTickets:
                     "email": tickets_data["email"],
                     "details": {
                         "name": tickets_data["name"],
-                        "surname": tickets_data["surname"],
-                        "phone": tickets_data["phone"]
+                        "surname": tickets_data["surname"]
                     }
                 },
                 "site": {
@@ -63,6 +62,8 @@ class QTickets:
                 "baskets": tickets_data['baskets']
             }
         }
+        if tickets_data.get('phone'):
+            request_body['data']['client']['details'] = tickets_data['phone']
         if juridicial:
             request_body['data']['fields'] = {
                 "legal_name": tickets_data['legal_name'],
