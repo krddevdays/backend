@@ -26,6 +26,7 @@ class EventAdmin(admin.ModelAdmin):
         ('', {'fields': (('name', 'venue'), ('start_date', 'finish_date'))}),
         ('Descriptions', {'fields': ('short_description', 'full_description', 'ticket_description')}),
         ('Images', {'fields': ('image', 'image_vk', 'image_facebook')}),
+        ('Call for papers', {'fields': (('cfp_start', 'cfp_finish'), 'cfp_url')}),
         ('QTicket system', {'fields': ('external_id',)})
     )
 
