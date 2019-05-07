@@ -19,6 +19,7 @@ class Venue(models.Model):
 class Zone(models.Model):
     name = models.CharField(max_length=50)
     venue = models.ForeignKey(Venue, on_delete=models.PROTECT, related_name='zone')
+    order = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         return f'{self.name} ({self.venue.name})'
