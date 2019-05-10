@@ -1,9 +1,13 @@
+import dateutil
 from django.db import models
+from django.utils import timezone
 from django.utils.module_loading import import_string
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import empty
 
+from events.qtickets import QTicketsInfo
 from .models import Event, Activity, ActivityType, Venue
 
 
@@ -82,6 +86,12 @@ class TicketsSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
+class QErr:
+    NOT_ACTIVE = 'Ивент не активен в данный момент'
+    SALE_NOT_STARTED = 'Продажа билетов еще не началась'
+    P_ID_NOT_FOUND = 'Не найден payment_id'
+
+
 class QTicketsOrderSerializer(serializers.Serializer):
     first_name = serializers.CharField(help_text='Имя')
     last_name = serializers.CharField(help_text='Фамилия')
@@ -92,3 +102,34 @@ class QTicketsOrderSerializer(serializers.Serializer):
 
     inn = serializers.CharField(validators=[check_inn, ], required=False)
     legal_name = serializers.CharField(required=False)
+
+    def __init__(self, event_id, instance=None, data=empty, **kwargs):
+        self.event_info = QTicketsInfo.get_event_data(event_id)
+        self.seats_info = QTicketsInfo.get_seats_data(
+            select_fields=["free_quantity", "disabled"],
+            show_id=self.event_info['shows'][0]['id'],
+            flat=True
+        )
+        super().__init__(instance, data, **kwargs)
+
+    def validate(self, attrs):
+        current_show = self.event_info['shows'][0]
+
+        # Шоу и ивент должны быть активны
+        if (
+                not int(self.event_info['is_active'])
+                or not int(current_show['is_active'])
+        ):
+            raise ValidationError(QErr.NOT_ACTIVE)
+        # Дата старта продаж должна быть больше текущей
+        elif (
+                current_show['sale_start_date'] is not None
+                and dateutil.parser.parse(current_show['sale_start_date']) > timezone.now()
+        ):
+            raise ValidationError(QErr.SALE_NOT_STARTED)
+        return attrs
+
+    def validate_payment_id(self, payment_id):
+        if payment_id not in [p['id'] for p in self.event_info['payments']]:
+            raise ValidationError(QErr.P_ID_NOT_FOUND)
+        return payment_id

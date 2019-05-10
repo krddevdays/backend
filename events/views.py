@@ -1,7 +1,5 @@
 from collections import Counter
 
-import dateutil.parser
-from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -40,7 +38,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         if event.external_id is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        order = self.get_serializer(data=self.request.data)
+        order = self.get_serializer(event_id=event.external_id, data=self.request.data)
         order.is_valid(raise_exception=True)
 
         try:
@@ -56,18 +54,6 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         data = order.data
 
         current_show = event_info['shows'][0]
-        if (
-                not event_info['is_active']  # эвент должен быть активен
-                or not current_show['is_active']  # show должно быть активным
-                or
-                (
-                        current_show['sale_start_date'] is not None
-                        and dateutil.parser.parse(current_show['sale_start_date']) >= timezone.now()
-                )
-                or dateutil.parser.parse(current_show['sale_finish_date']) < timezone.now()
-                or data['payment_id'] not in [p['id'] for p in event_info['payments']]
-        ):
-            return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             payment = [p for p in event_info['payments'] if p['id'] == data['payment_id']][0]
         except IndexError:

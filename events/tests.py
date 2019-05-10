@@ -9,64 +9,70 @@ from events.apps import EventsConfig
 from events.factories import EventFactory, VenueFactory, ZoneFactory, ActivityFactory
 from events.interfaces import ActivityType, WelcomeActivity
 from events.qtickets import QTicketsInfo
+from events.serializers import QErr
 
 events_response = {'id': '120', 'is_active': '1', 'name': 'Krasnodar Dev Conf 2019', 'scheme_id': '259',
                    'currency_id': 'RUB',
                    'place_name': 'Four Points Sheraton Краснодар', 'place_address': 'ул. Конгрессная, 4',
                    'place_description': '', 'city_id': '5', 'description': '', 'site_url': '', 'external_id': None,
-                   'ticket_id': '19', 'mail_template_id': '32', 'shows': [
-        {'id': '149', 'is_active': '1', 'sale_start_date': None, 'sale_finish_date': '2019-08-16T00:00:00+03:00',
-         'open_date': '2019-08-24T10:00:00+03:00', 'start_date': '2019-08-24T11:00:00+03:00',
-         'finish_date': '2019-08-25T20:00:00+03:00', 'scheme_properties': {'admin': {
-            'zones': {'pervyj-den': {'opened': '1'}, 'vtoroj-den': {'opened': '1'}, 'dva-dnya': {'opened': '0'}}},
-            'zones': {'pervyj-den': {'disabled': '0',
-                                     'price_id': '534',
-                                     'rows': ['']},
-                      'vtoroj-den': {'disabled': '0',
-                                     'price_id': '533',
-                                     'rows': ['']},
-                      'dva-dnya': {'disabled': '1',
-                                   'price_id': '',
-                                   'rows': ['']}},
-            'seats': {'pervyj-den-1;1': {
-                'max_quantity': '350'},
-                'vtoroj-den-1;1': {
-                    'max_quantity': '350'},
-                'dva-dnya-1;1': {
-                    'max_quantity': ''}}},
-         'prices': [{'id': 533, 'default_price': 2000, 'color_theme': '1', 'modifiers': [
-             {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '', 'sales_count_value': '50'},
-             {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
-              'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
-             {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
-              'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
-             {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
-              'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]},
-                    {'id': 534, 'default_price': 2000, 'color_theme': '2', 'modifiers': [
-                        {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '',
-                         'sales_count_value': '50'},
-                        {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
-                         'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
-                        {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
-                         'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
-                        {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
-                         'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]}],
-         'min_price': {'id': 534, 'default_price': 2000, 'color_theme': '2', 'modifiers': [
-             {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '', 'sales_count_value': '50'},
-             {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
-              'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
-             {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
-              'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
-             {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
-              'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]},
-         'max_price': {'id': 533, 'default_price': 2000, 'color_theme': '1', 'modifiers': [
-             {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '', 'sales_count_value': '50'},
-             {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
-              'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
-             {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
-              'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
-             {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
-              'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]}, 'deleted_at': None}],
+                   'ticket_id': '19', 'mail_template_id': '32', 'shows':
+                       [{'id': '149', 'is_active': '1', 'sale_start_date': None,
+                         'sale_finish_date': '2019-08-16T00:00:00+03:00',
+                         'open_date': '2019-08-24T10:00:00+03:00', 'start_date': '2019-08-24T11:00:00+03:00',
+                         'finish_date': '2019-08-25T20:00:00+03:00', 'scheme_properties': {'admin': {
+                               'zones': {'pervyj-den': {'opened': '1'}, 'vtoroj-den': {'opened': '1'},
+                                         'dva-dnya': {'opened': '0'}}},
+                               'zones': {'pervyj-den': {'disabled': '0',
+                                                        'price_id': '534',
+                                                        'rows': ['']},
+                                         'vtoroj-den': {'disabled': '0',
+                                                        'price_id': '533',
+                                                        'rows': ['']},
+                                         'dva-dnya': {'disabled': '1',
+                                                      'price_id': '',
+                                                      'rows': ['']}},
+                               'seats': {'pervyj-den-1;1': {
+                                   'max_quantity': '350'},
+                                   'vtoroj-den-1;1': {
+                                       'max_quantity': '350'},
+                                   'dva-dnya-1;1': {
+                                       'max_quantity': ''}}},
+                         'prices': [{'id': 533, 'default_price': 2000, 'color_theme': '1', 'modifiers': [
+                             {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '',
+                              'sales_count_value': '50'},
+                             {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
+                              'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
+                             {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
+                              'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
+                             {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
+                              'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]},
+                                    {'id': 534, 'default_price': 2000, 'color_theme': '2', 'modifiers': [
+                                        {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '',
+                                         'sales_count_value': '50'},
+                                        {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
+                                         'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
+                                        {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
+                                         'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
+                                        {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
+                                         'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]}],
+                         'min_price': {'id': 534, 'default_price': 2000, 'color_theme': '2', 'modifiers': [
+                             {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '',
+                              'sales_count_value': '50'},
+                             {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
+                              'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
+                             {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
+                              'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
+                             {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
+                              'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]},
+                         'max_price': {'id': 533, 'default_price': 2000, 'color_theme': '1', 'modifiers': [
+                             {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '',
+                              'sales_count_value': '50'},
+                             {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
+                              'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
+                             {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
+                              'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
+                             {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
+                              'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]}, 'deleted_at': None}],
                    'payments': [{'id': '77', 'is_active': True, 'name': 'Оплата по счету', 'handler': 'invoice',
                                  'agree_url': 'https://new.qtickets.ru/legal/kdd?event=120'},
                                 {'id': '79', 'is_active': True, 'name': 'Петров П.П.', 'handler': 'best2pay',
@@ -147,6 +153,13 @@ class EventsTestCase(TestCase):
     @patch.object(QTicketsInfo, 'get_seats_data', return_value=seats_response)
     @patch.object(QTicketsInfo, 'get_order_tickets_url', return_value={'url': 'https://test.com/fail'})
     def test_order(self, *args, **kwargs):
+        def err_code_check(q_err_code, request_data=None, error_field='non_field_errors'):
+            request = self.client.post(url, data=request_data or good_request_basic, content_type='application/json')
+            self.assertEqual(request.status_code, 400)
+            body = request.json()
+            self.assertIn(error_field, body)
+            self.assertEqual(body[error_field], [q_err_code])
+
         url = reverse('event-order', args=(self.event.id,))
         response = self.client.post(url)
         self.assertEqual(response.status_code, 404)
@@ -171,6 +184,22 @@ class EventsTestCase(TestCase):
         request = self.client.post(url, data=good_request_basic, content_type='application/json')
         self.assertEqual(request.status_code, 200)
         self.assertIn('url', request.json())
+
+        events_response['is_active'] = '0'
+        err_code_check(QErr.NOT_ACTIVE)
+        events_response['is_active'] = '1'
+
+        events_response['shows'][0]['is_active'] = '0'
+        err_code_check(QErr.NOT_ACTIVE)
+        events_response['shows'][0]['is_active'] = '1'
+
+        events_response['shows'][0]['sale_start_date'] = '2119-05-02T18:39:34+03:00'
+        err_code_check(QErr.SALE_NOT_STARTED)
+        events_response['shows'][0]['sale_start_date'] = '2019-05-02T18:39:34+03:00'
+
+        bad_payment_id_request = good_request_basic.copy()
+        bad_payment_id_request['payment_id'] = '123456'
+        err_code_check(QErr.P_ID_NOT_FOUND, bad_payment_id_request, 'payment_id')
 
     def test_str(self):
         venue = VenueFactory(name='venue name', address='address')
