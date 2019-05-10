@@ -5,11 +5,11 @@ from django.apps import apps
 from django.test import TestCase
 from rest_framework.reverse import reverse
 
-from events.apps import EventsConfig
-from events.factories import EventFactory, VenueFactory, ZoneFactory, ActivityFactory
-from events.interfaces import ActivityType, WelcomeActivity
-from events.qtickets import QTicketsInfo
-from events.serializers import QErr
+from .apps import EventsConfig
+from .factories import EventFactory, VenueFactory, ZoneFactory, ActivityFactory
+from .interfaces import ActivityType, WelcomeActivity
+from .qtickets import QTicketsInfo
+from .serializers import QErr
 
 events_response = {'id': '120', 'is_active': '1', 'name': 'Krasnodar Dev Conf 2019', 'scheme_id': '259',
                    'currency_id': 'RUB',
