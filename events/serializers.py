@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.module_loading import import_string
 from rest_framework import serializers
 
-from .models import Event, Activity, ActivityType, Venue
+from .models import Event, Activity, ActivityType, Venue, Zone
 
 
 class EnumField(serializers.ChoiceField):
@@ -14,10 +14,18 @@ class BaseActivitySerializer(serializers.Serializer):
     title = serializers.CharField()
 
 
+class ZoneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Zone
+        fields = ('name', 'order')
+
+
 class VenueSerializer(serializers.ModelSerializer):
+    zones = ZoneSerializer(many=True)
+
     class Meta:
         model = Venue
-        fields = ('name', 'address', 'latitude', 'longitude')
+        fields = ('name', 'address', 'latitude', 'longitude', 'zones')
 
 
 class EventSerializer(serializers.ModelSerializer):
