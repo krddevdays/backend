@@ -13,7 +13,10 @@ class EventsTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         date = datetime.datetime(2019, 1, 1, tzinfo=datetime.timezone.utc)
-        cls.event = EventFactory(start_date=date)
+        venue = VenueFactory()
+        ZoneFactory(order=0, venue=venue)
+        ZoneFactory(order=1, venue=venue)
+        cls.event = EventFactory(start_date=date, venue=venue)
 
     def _check_event(self, data: dict, event: EventFactory):
         for field in ('id', 'name', 'short_description', 'full_description', 'ticket_description',
@@ -27,6 +30,8 @@ class EventsTestCase(TestCase):
         self.assertEqual(venue['address'], event.venue.address)
         self.assertEqual(venue['latitude'], event.venue.latitude)
         self.assertEqual(venue['longitude'], event.venue.longitude)
+        zones = venue['zones']
+        self.assertEqual(len(zones), 2)
 
     def test_apps(self):
         self.assertEqual(EventsConfig.name, 'events')
