@@ -39,6 +39,10 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         event = self.get_object()
         if event.external_id is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+        order = self.get_serializer(data=self.request.data)
+        order.is_valid(raise_exception=True)
+
         try:
             event_info = QTicketsInfo.get_event_data(event.external_id)
             seats = QTicketsInfo.get_seats_data(
@@ -49,8 +53,6 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         except Exception:
             return Response(status=502)
 
-        order = self.get_serializer(data=self.request.data)
-        order.is_valid(raise_exception=True)
         data = order.data
 
         current_show = event_info['shows'][0]
@@ -86,7 +88,6 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
                     ticket_request['type_id'] not in seats
                     or seats[ticket_request['type_id']]['disabled']
                     or seats_by_type[ticket_request['type_id']] > seats[ticket_request['type_id']]['free_quantity']
-                    # fixme: проверка проходит много раз, а должна быть одна и сразу
             ):
                 return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -95,7 +96,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
             'name': data['first_name'],
             'surname': data['last_name'],
             'phone': data.get('phone', ''),
-            'host': self.request.META['HTTP_HOST'],
+            'host': self.request.META.get('HTTP_HOST', 'krd.dev'),
             'payment_id': data['payment_id'],
             'event_id': event.external_id,
             'baskets': [

@@ -1,4 +1,5 @@
 import datetime
+from unittest.mock import patch
 
 from django.apps import apps
 from django.test import TestCase
@@ -7,6 +8,81 @@ from rest_framework.reverse import reverse
 from events.apps import EventsConfig
 from events.factories import EventFactory, VenueFactory, ZoneFactory, ActivityFactory
 from events.interfaces import ActivityType, WelcomeActivity
+from events.qtickets import QTicketsInfo
+
+events_response = {'id': '120', 'is_active': '1', 'name': 'Krasnodar Dev Conf 2019', 'scheme_id': '259',
+                   'currency_id': 'RUB',
+                   'place_name': 'Four Points Sheraton Краснодар', 'place_address': 'ул. Конгрессная, 4',
+                   'place_description': '', 'city_id': '5', 'description': '', 'site_url': '', 'external_id': None,
+                   'ticket_id': '19', 'mail_template_id': '32', 'shows': [
+        {'id': '149', 'is_active': '1', 'sale_start_date': None, 'sale_finish_date': '2019-08-16T00:00:00+03:00',
+         'open_date': '2019-08-24T10:00:00+03:00', 'start_date': '2019-08-24T11:00:00+03:00',
+         'finish_date': '2019-08-25T20:00:00+03:00', 'scheme_properties': {'admin': {
+            'zones': {'pervyj-den': {'opened': '1'}, 'vtoroj-den': {'opened': '1'}, 'dva-dnya': {'opened': '0'}}},
+            'zones': {'pervyj-den': {'disabled': '0',
+                                     'price_id': '534',
+                                     'rows': ['']},
+                      'vtoroj-den': {'disabled': '0',
+                                     'price_id': '533',
+                                     'rows': ['']},
+                      'dva-dnya': {'disabled': '1',
+                                   'price_id': '',
+                                   'rows': ['']}},
+            'seats': {'pervyj-den-1;1': {
+                'max_quantity': '350'},
+                'vtoroj-den-1;1': {
+                    'max_quantity': '350'},
+                'dva-dnya-1;1': {
+                    'max_quantity': ''}}},
+         'prices': [{'id': 533, 'default_price': 2000, 'color_theme': '1', 'modifiers': [
+             {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '', 'sales_count_value': '50'},
+             {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
+              'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
+             {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
+              'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
+             {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
+              'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]},
+                    {'id': 534, 'default_price': 2000, 'color_theme': '2', 'modifiers': [
+                        {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '',
+                         'sales_count_value': '50'},
+                        {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
+                         'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
+                        {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
+                         'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
+                        {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
+                         'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]}],
+         'min_price': {'id': 534, 'default_price': 2000, 'color_theme': '2', 'modifiers': [
+             {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '', 'sales_count_value': '50'},
+             {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
+              'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
+             {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
+              'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
+             {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
+              'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]},
+         'max_price': {'id': 533, 'default_price': 2000, 'color_theme': '1', 'modifiers': [
+             {'type': 'sales_count', 'value': '2500', 'active_from': '', 'active_to': '', 'sales_count_value': '50'},
+             {'type': 'date', 'value': '2500', 'active_from': '2019-06-01T00:00:00+03:00',
+              'active_to': '2019-07-01T00:00:00+03:00', 'sales_count_value': ''},
+             {'type': 'date', 'value': '3000', 'active_from': '2019-07-01T00:00:00+03:00',
+              'active_to': '2019-08-01T00:00:00+03:00', 'sales_count_value': ''},
+             {'type': 'date', 'value': '3500', 'active_from': '2019-08-01T00:00:00+03:00',
+              'active_to': '2019-08-16T00:00:00+03:00', 'sales_count_value': ''}]}, 'deleted_at': None}],
+                   'payments': [{'id': '77', 'is_active': True, 'name': 'Оплата по счету', 'handler': 'invoice',
+                                 'agree_url': 'https://new.qtickets.ru/legal/kdd?event=120'},
+                                {'id': '79', 'is_active': True, 'name': 'Петров П.П.', 'handler': 'best2pay',
+                                 'agree_url': 'https://new.qtickets.ru/legal/kdd?event=120'}],
+                   'poster': {'id': '1922', 'content_type': 'image/jpeg', 'file_size': '65833'}, 'event_type_id': '7',
+                   'city': {'id': '5', 'name': 'Краснодар', 'timezone': 'Europe/Moscow'},
+                   'ticket': {'id': '19', 'is_active': '1', 'name': 'Системный шаблон'},
+                   'mail_template': {'id': '32', 'is_active': '1', 'name': 'Системный шаблон'},
+                   'slug': 'krasnodar-dev-conf-2019', 'place_coordinates': [45.104652, 38.971342],
+                   'created_at': '2019-04-24T17:11:37+03:00', 'updated_at': '2019-05-02T18:39:34+03:00',
+                   'deleted_at': None}
+
+seats_response = {
+    'pervyj-den-1;1': {'seat_id': 'pervyj-den-1;1', 'admission': True, 'free_quantity': 348, 'disabled': False},
+    'vtoroj-den-1;1': {'seat_id': 'vtoroj-den-1;1', 'admission': True, 'free_quantity': 350, 'disabled': False},
+    'dva-dnya-1;1': {'seat_id': 'dva-dnya-1;1', 'admission': True, 'free_quantity': 0, 'disabled': True}}
 
 
 class EventsTestCase(TestCase):
@@ -67,25 +143,34 @@ class EventsTestCase(TestCase):
     def test_tickets(self):
         pass
 
-    def test_order(self):
+    @patch.object(QTicketsInfo, 'get_event_data', return_value=events_response)
+    @patch.object(QTicketsInfo, 'get_seats_data', return_value=seats_response)
+    @patch.object(QTicketsInfo, 'get_order_tickets_url', return_value={'url': 'https://test.com/fail'})
+    def test_order(self, *args, **kwargs):
         url = reverse('event-order', args=(self.event.id,))
         response = self.client.post(url)
         self.assertEqual(response.status_code, 404)
-        self.event.external_id = 2
+        self.event.external_id = 120
         self.event.save()
-        good_request_basic = {'first_name': 'Alex',
-                              'last_name': 'Johns',
-                              'email': 'a@a.ru',
-                              'phone': '+79631000000',
-                              'payment_id': '123',
-                              }
+        good_request_basic = {
+            "first_name": "Alex", "last_name": "Johns", "email": "a@a.ru", "phone": "+78612522262", "payment_id": "79",
+            "tickets": [
+                {"first_name": "Ser", "last_name": "Ber", "email": "sergeibershadsky@gmail.com", "type_id": "pervyj-den-1;1"}
+            ]
+        }
+
         good_request_inn = good_request_basic.copy()
         good_request_inn.update({'inn': '7810671063', 'legal_name': 'Рога и Копыта'})
         bad_phone_request = good_request_basic.copy()
+
         bad_phone_request.update({'phone': '+7944123123'})
         request = self.client.post(url, data=bad_phone_request)
         self.assertEqual(request.status_code, 400)
         self.assertIn('phone', request.json())
+
+        request = self.client.post(url, data=good_request_basic, content_type='application/json')
+        self.assertEqual(request.status_code, 200)
+        self.assertIn('url', request.json())
 
     def test_str(self):
         venue = VenueFactory(name='venue name', address='address')
