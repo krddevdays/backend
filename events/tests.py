@@ -201,6 +201,16 @@ class EventsTestCase(TestCase):
         bad_payment_id_request['payment_id'] = '123456'
         err_code_check(QErr.P_ID_NOT_FOUND, bad_payment_id_request, 'payment_id')
 
+        request = self.client.post(url, data=good_request_inn, content_type='application/json')
+        self.assertEqual(request.status_code, 200)
+        self.assertIn('url', request.json())
+
+        bad_request_inn = good_request_inn.copy()
+        bad_request_inn['payment_id'] = '77'
+        del bad_request_inn['inn']
+        request = self.client.post(url, data=bad_request_inn, content_type='application/json')
+        err_code_check(QErr.LEGAL, bad_request_inn, 'payment_id')
+
     def test_str(self):
         venue = VenueFactory(name='venue name', address='address')
         self.assertEqual(str(venue), 'venue name, address')

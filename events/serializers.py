@@ -1,4 +1,4 @@
-import dateutil
+import dateutil.parser
 from django.db import models
 from django.utils import timezone
 from django.utils.module_loading import import_string
@@ -90,6 +90,7 @@ class QErr:
     NOT_ACTIVE = 'Ивент не активен в данный момент'
     SALE_NOT_STARTED = 'Продажа билетов еще не началась'
     P_ID_NOT_FOUND = 'Не найден payment_id'
+    LEGAL = 'Неверные данные для зказа, ИНН и/или наименование организации не указанны'
 
 
 class QTicketsOrderSerializer(serializers.Serializer):
@@ -130,6 +131,11 @@ class QTicketsOrderSerializer(serializers.Serializer):
         return attrs
 
     def validate_payment_id(self, payment_id):
-        if payment_id not in [p['id'] for p in self.event_info['payments']]:
+        for payment in self.event_info['payments']:
+            if payment['id'] == payment_id:
+                break
+        else:
             raise ValidationError(QErr.P_ID_NOT_FOUND)
+        if payment['handler'] == 'invoice' and {'inn', 'legal_name'} - set(self.initial_data):
+            raise ValidationError(QErr.LEGAL)
         return payment_id
