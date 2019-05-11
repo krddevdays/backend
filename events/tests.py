@@ -201,7 +201,7 @@ class EventsTestCase(TestCase):
         good_request_basic = {
             "first_name": "Alex", "last_name": "Johns", "email": "a@a.ru", "phone": "+78612522262", "payment_id": "79",
             "tickets": [
-                {"first_name": "Ser", "last_name": "Ber", "email": "sergeibershadsky@gmail.com", "type_id": "pervyj-den-1;1"}
+                {"first_name": "Ser", "last_name": "Ber", "email": "morzh@morhzhoviy.com", "type_id": "pervyj-den-1;1"}
             ]
         }
 
