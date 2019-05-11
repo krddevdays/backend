@@ -76,6 +76,11 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+# explicitly set format because .isoformat() can return value without microseconds
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ'
+}
+
 STATIC_URL = '/static/'
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

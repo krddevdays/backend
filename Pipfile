@@ -19,6 +19,8 @@ coreapi = "*"
 django-phonenumber-field = "*"
 phonenumberslite = "*"
 python-dateutil = "*"
+python-dotenv = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.7"

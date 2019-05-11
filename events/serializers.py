@@ -10,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 
 from events.qtickets import QTicketsInfo
-from .models import Event, Activity, ActivityType, Venue
+from .models import Event, Activity, ActivityType, Venue, Zone
 
 
 class EnumField(serializers.ChoiceField):
@@ -22,10 +22,18 @@ class BaseActivitySerializer(serializers.Serializer):
     title = serializers.CharField()
 
 
+class ZoneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Zone
+        fields = ('name', 'order')
+
+
 class VenueSerializer(serializers.ModelSerializer):
+    zones = ZoneSerializer(many=True)
+
     class Meta:
         model = Venue
-        fields = ('name', 'address', 'latitude', 'longitude')
+        fields = ('name', 'address', 'latitude', 'longitude', 'zones')
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -33,7 +41,9 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ('id', 'name', 'start_date', 'finish_date', 'venue')
+        fields = ('id', 'name', 'short_description', 'full_description', 'ticket_description',
+                  'image', 'image_vk', 'image_facebook', 'start_date', 'finish_date', 'venue',
+                  'cfp_start', 'cfp_finish', 'cfp_url')
 
 
 class ActivitySerializer(serializers.ModelSerializer):
