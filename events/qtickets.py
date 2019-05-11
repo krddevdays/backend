@@ -63,7 +63,7 @@ class QTickets:
             }
         }
         if tickets_data.get('phone'):
-            request_body['data']['client']['details'] = tickets_data['phone']
+            request_body['data']['client']['details']['phone'] = tickets_data['phone']
         if juridicial:
             request_body['data']['fields'] = {
                 "legal_name": tickets_data['legal_name'],

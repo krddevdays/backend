@@ -162,3 +162,34 @@ class QTicketsOrderSerializer(serializers.Serializer):
         if payment['handler'] == 'invoice' and {'inn', 'legal_name'} - set(self.initial_data):
             raise ValidationError(QErr.LEGAL)
         return payment_id
+
+    def order_tickets(self, host: str, external_id: int) -> str:
+        juridicial = False
+        order_body = {
+            'email': self.validated_data['email'],
+            'name': self.validated_data['first_name'],
+            'surname': self.validated_data['last_name'],
+            'phone': str(self.validated_data.get('phone', '')),
+            'host': host,
+            'payment_id': self.validated_data['payment_id'],
+            'event_id': external_id,
+            'baskets': [
+                {
+                    'show_id': self.current_show['id'],
+                    'seat_id': basket['type_id'],
+                    'client_email': basket['email'],
+                    'client_name': basket['first_name'],
+                    'client_surname': basket['last_name']
+
+                }
+                for basket
+                in self.validated_data['tickets']
+            ]
+        }
+        if 'inn' in self.validated_data:
+            order_body.update({'legal_name': self.validated_data['legal_name'], 'inn': self.validated_data['inn']})
+            juridicial = True
+        return QTicketsInfo.get_order_tickets_url(
+            tickets_data=order_body,
+            juridicial=juridicial
+        )

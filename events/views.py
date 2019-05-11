@@ -1,5 +1,3 @@
-from collections import Counter
-
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -42,49 +40,10 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         order.is_valid(raise_exception=True)
 
         try:
-            event_info = QTicketsInfo.get_event_data(event.external_id)
-            seats = QTicketsInfo.get_seats_data(
-                select_fields=["free_quantity", "disabled"],
-                show_id=event_info['shows'][0]['id'],
-                flat=True
+            payment_url = order.order_tickets(
+                host=self.request.META.get('HTTP_HOST', 'krd.dev'),
+                external_id=event.external_id
             )
-        except Exception:
-            return Response(status=502)
-
-        data = order.data
-
-        current_show = event_info['shows'][0]
-
-        seats_by_type = Counter([el['type_id'] for el in data['tickets']])
-
-        order_body = {
-            'email': data['email'],
-            'name': data['first_name'],
-            'surname': data['last_name'],
-            'phone': data.get('phone', ''),
-            'host': self.request.META.get('HTTP_HOST', 'krd.dev'),
-            'payment_id': data['payment_id'],
-            'event_id': event.external_id,
-            'baskets': [
-                {
-                    'show_id': current_show['id'],
-                    'seat_id': basket['type_id'],
-                    'client_email': basket['email'],
-                    'client_name': basket['first_name'],
-                    'client_surname': basket['last_name']
-
-                }
-                for basket
-                in data['tickets']
-            ]
-        }
-        juridicial = False
-        if 'inn' in data:
-            order_body.update({'legal_name': data['legal_name'], 'inn': data['inn']})
-            juridicial = True
-
-        try:
-            payment_url = QTicketsInfo.get_order_tickets_url(tickets_data=order_body, juridicial=juridicial)
         except Exception as e:
             return Response(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
