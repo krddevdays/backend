@@ -58,10 +58,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         seats_by_type = Counter([el['type_id'] for el in data['tickets']])
 
         for ticket_request in data['tickets']:
-            if (
-                    seats[ticket_request['type_id']]['disabled']
-                    or seats_by_type[ticket_request['type_id']] > seats[ticket_request['type_id']]['free_quantity']
-            ):
+            if seats_by_type[ticket_request['type_id']] > seats[ticket_request['type_id']]['free_quantity']:
                 return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)
 
         order_body = {

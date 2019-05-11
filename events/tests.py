@@ -203,6 +203,7 @@ class EventsTestCase(TestCase):
         bad_payment_id_request = good_request_basic.copy()
         bad_payment_id_request['payment_id'] = '123456'
         err_code_check(QErr.P_ID_NOT_FOUND, bad_payment_id_request, 'payment_id')
+        del bad_payment_id_request
 
         request = self.client.post(url, data=good_request_inn, content_type='application/json')
         self.assertEqual(request.status_code, 200)
@@ -225,11 +226,15 @@ class EventsTestCase(TestCase):
         err_code_check(QErr.TICKETS_EMAIL_NON_UNIQ, doubled_email_request)
         del doubled_email_request
 
-        bad_request_ticket_type_id = good_request_basic.copy()
+        bad_request_ticket_type_id = copy.deepcopy(good_request_basic)
         bad_request_ticket_type_id['tickets'][0]['type_id'] = get_random_string()
         err_code_check(QErr.TICKETS_TYPE_ID_NONEXISTS.format(type_id=bad_request_ticket_type_id['tickets'][0]['type_id']),
                        bad_request_ticket_type_id)
         del bad_request_ticket_type_id
+
+        seats_response[good_request_basic['tickets'][0]['type_id']]['disabled'] = True
+        err_code_check(QErr.TICKETS_TYPE_ID_DISABLED.format(type_id=good_request_basic['tickets'][0]['type_id']))
+        seats_response[good_request_basic['tickets'][0]['type_id']]['disabled'] = False
 
     def test_str(self):
         venue = VenueFactory(name='venue name', address='address')

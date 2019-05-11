@@ -95,6 +95,7 @@ class QErr:
     LEGAL = 'Неверные данные для зказа, ИНН и/или наименование организации не указанны'
     TICKETS_EMAIL_NON_UNIQ = 'Email в запросе на покупку билетов не уникальны'
     TICKETS_TYPE_ID_NONEXISTS = 'Неверный type_id в заказе, {type_id} не существует'
+    TICKETS_TYPE_ID_DISABLED = 'Неверный type_id в заказе, {type_id} не доступны для покупки'
 
 
 class QTicketsOrderSerializer(serializers.Serializer):
@@ -141,8 +142,11 @@ class QTicketsOrderSerializer(serializers.Serializer):
         seats_by_type = Counter([el['type_id'] for el in data['tickets']])
 
         for ticket_request in data['tickets']:
-            if ticket_request['type_id'] not in self.seats_info:
-                raise ValidationError(QErr.TICKETS_TYPE_ID_NONEXISTS.format(type_id=ticket_request['type_id']))
+            type_id = ticket_request['type_id']
+            if type_id not in self.seats_info:
+                raise ValidationError(QErr.TICKETS_TYPE_ID_NONEXISTS.format(type_id=type_id))
+            elif self.seats_info[ticket_request['type_id']]['disabled']:
+                raise ValidationError(QErr.TICKETS_TYPE_ID_DISABLED.format(type_id=type_id))
 
         return data
 
