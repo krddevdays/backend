@@ -96,6 +96,7 @@ class QErr:
     TICKETS_EMAIL_NON_UNIQ = 'Email в запросе на покупку билетов не уникальны'
     TICKETS_TYPE_ID_NONEXISTS = 'Неверный type_id в заказе, {type_id} не существует'
     TICKETS_TYPE_ID_DISABLED = 'Неверный type_id в заказе, {type_id} не доступны для покупки'
+    MEST_NEMA = 'Для типа {type_id} недостаточно свободных мест'
 
 
 class QTicketsOrderSerializer(serializers.Serializer):
@@ -145,8 +146,10 @@ class QTicketsOrderSerializer(serializers.Serializer):
             type_id = ticket_request['type_id']
             if type_id not in self.seats_info:
                 raise ValidationError(QErr.TICKETS_TYPE_ID_NONEXISTS.format(type_id=type_id))
-            elif self.seats_info[ticket_request['type_id']]['disabled']:
+            elif self.seats_info[type_id]['disabled']:
                 raise ValidationError(QErr.TICKETS_TYPE_ID_DISABLED.format(type_id=type_id))
+            elif seats_by_type[type_id] > self.seats_info[type_id]['free_quantity']:
+                raise ValidationError(QErr.MEST_NEMA.format(type_id=type_id))
 
         return data
 

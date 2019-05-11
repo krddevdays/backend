@@ -236,6 +236,17 @@ class EventsTestCase(TestCase):
         err_code_check(QErr.TICKETS_TYPE_ID_DISABLED.format(type_id=good_request_basic['tickets'][0]['type_id']))
         seats_response[good_request_basic['tickets'][0]['type_id']]['disabled'] = False
 
+        seats_response[good_request_basic['tickets'][0]['type_id']]['free_quantity'] = 1
+        no_more_seets_request = copy.deepcopy(good_request_basic)
+        no_more_seets_request['tickets'].append(
+            {"first_name": "Random", "last_name": "Randomich", "email": "random@randomich.me", "type_id": "pervyj-den-1;1"}
+        )
+        err_code_check(QErr.MEST_NEMA.format(
+            type_id=no_more_seets_request['tickets'][0]['type_id']),
+            no_more_seets_request
+        )
+        del no_more_seets_request
+
     def test_str(self):
         venue = VenueFactory(name='venue name', address='address')
         self.assertEqual(str(venue), 'venue name, address')
