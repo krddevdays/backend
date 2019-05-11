@@ -23,6 +23,10 @@ class WelcomeActivity(ActivityInterface):
     title = 'Открытие'
 
 
+class CloseActivity(ActivityInterface):
+    title = 'Закрытие'
+
+
 class CoffeeActivity(ActivityInterface):
     title = 'Кофе-брейк'
 

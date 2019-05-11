@@ -2,7 +2,7 @@ from django import forms
 from django.db import models
 from django_enumfield import enum
 
-from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity
+from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity, CloseActivity
 from .qtickets import QTicketsInfo
 
 
@@ -72,6 +72,7 @@ class Activity(models.Model):
         items = {
             ActivityType.TALK: getattr(self, 'talk', None),
             ActivityType.WELCOME: WelcomeActivity(),
+            ActivityType.CLOSE: CloseActivity(),
             ActivityType.COFFEE: CoffeeActivity(),
             ActivityType.LUNCH: LunchActivity(),
         }
