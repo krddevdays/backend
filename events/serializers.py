@@ -80,7 +80,7 @@ def check_inn(inn):
         return str(sum([k * v for k, v in pairs]) % 11 % 10)
 
     if len(inn) not in (10, 12):
-        raise ValidationError('Неверный ИНН, длинна должна быть 10 или 12 символов', code='inn')
+        raise ValidationError('Неверный ИНН, длина должна быть 10 или 12 символов', code='inn')
 
     if len(inn) == 10:
         integrity = inn[-1] == inn_csum(inn[:-1])
