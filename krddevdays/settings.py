@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'phonenumber_field',
+    'django_filters',
 
     'users',
     'events',
@@ -78,7 +79,7 @@ USE_TZ = True
 
 # explicitly set format because .isoformat() can return value without microseconds
 REST_FRAMEWORK = {
-    'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ'
+    'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ',
 }
 
 STATIC_URL = '/static/'
