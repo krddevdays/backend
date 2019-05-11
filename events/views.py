@@ -55,11 +55,6 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
 
         current_show = event_info['shows'][0]
 
-        # email должны быть уникальны в рамках tickets из данного запроса
-        tickets_emails = [ticket['email'] for ticket in data['tickets']]
-        if len(tickets_emails) > len(set(tickets_emails)):
-            return Response(data={'error': 'Адреса электронной почты не уникальны'})
-
         seats_by_type = Counter([el['type_id'] for el in data['tickets']])
 
         for ticket_request in data['tickets']:

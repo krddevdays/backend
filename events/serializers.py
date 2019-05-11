@@ -91,6 +91,7 @@ class QErr:
     SALE_NOT_STARTED = 'Продажа билетов еще не началась'
     P_ID_NOT_FOUND = 'Не найден payment_id'
     LEGAL = 'Неверные данные для зказа, ИНН и/или наименование организации не указанны'
+    TICKETS_EMAIL_NON_UNIQ = 'Email в запросе на покупку билетов не уникальны'
 
 
 class QTicketsOrderSerializer(serializers.Serializer):
@@ -113,7 +114,7 @@ class QTicketsOrderSerializer(serializers.Serializer):
         )
         super().__init__(instance, data, **kwargs)
 
-    def validate(self, attrs):
+    def validate(self, data):
         current_show = self.event_info['shows'][0]
 
         # Шоу и ивент должны быть активны
@@ -128,7 +129,12 @@ class QTicketsOrderSerializer(serializers.Serializer):
                 and dateutil.parser.parse(current_show['sale_start_date']) > timezone.now()
         ):
             raise ValidationError(QErr.SALE_NOT_STARTED)
-        return attrs
+
+        # email должны быть уникальны в рамках tickets из данного запроса
+        tickets_emails = [ticket['email'] for ticket in data['tickets']]
+        if len(tickets_emails) > len(set(tickets_emails)):
+            raise ValidationError(QErr.TICKETS_EMAIL_NON_UNIQ)
+        return data
 
     def validate_payment_id(self, payment_id):
         for payment in self.event_info['payments']:

@@ -208,8 +208,16 @@ class EventsTestCase(TestCase):
         bad_request_inn = good_request_inn.copy()
         bad_request_inn['payment_id'] = '77'
         del bad_request_inn['inn']
-        request = self.client.post(url, data=bad_request_inn, content_type='application/json')
         err_code_check(QErr.LEGAL, bad_request_inn, 'payment_id')
+
+        bad_request_legal = good_request_inn.copy()
+        bad_request_legal['payment_id'] = '77'
+        del bad_request_legal['legal_name']
+        err_code_check(QErr.LEGAL, bad_request_legal, 'payment_id')
+
+        doubled_email_request = good_request_basic.copy()
+        doubled_email_request['tickets'].append(doubled_email_request['tickets'][0])
+        err_code_check(QErr.TICKETS_EMAIL_NON_UNIQ, doubled_email_request)
 
     def test_str(self):
         venue = VenueFactory(name='venue name', address='address')
