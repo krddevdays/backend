@@ -112,21 +112,21 @@ class QTicketsOrderSerializer(serializers.Serializer):
             show_id=self.event_info['shows'][0]['id'],
             flat=True
         )
+        self.current_show = self.event_info['shows'][0]
         super().__init__(instance, data, **kwargs)
 
     def validate(self, data):
-        current_show = self.event_info['shows'][0]
 
         # Шоу и ивент должны быть активны
         if (
                 not int(self.event_info['is_active'])
-                or not int(current_show['is_active'])
+                or not int(self.current_show['is_active'])
         ):
             raise ValidationError(QErr.NOT_ACTIVE)
         # Дата старта продаж должна быть больше текущей
         elif (
-                current_show['sale_start_date'] is not None
-                and dateutil.parser.parse(current_show['sale_start_date']) > timezone.now()
+                self.current_show['sale_start_date'] is not None
+                and dateutil.parser.parse(self.current_show['sale_start_date']) > timezone.now()
         ):
             raise ValidationError(QErr.SALE_NOT_STARTED)
 
