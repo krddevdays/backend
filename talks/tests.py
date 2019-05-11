@@ -2,7 +2,7 @@ from django.apps import apps
 from django.test import TestCase
 from rest_framework.reverse import reverse
 
-from events.factories import ActivityFactory
+from events.factories import ActivityFactory, EventFactory
 from events.interfaces import ActivityType
 from talks.apps import TalksConfig
 from talks.factories import TalkFactory, SpeakerFactory
@@ -47,6 +47,15 @@ class TalkTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self._check_talk(data, self.talk)
+
+    def test_talk_filter(self):
+        event = EventFactory()
+        talk = TalkFactory(event=event)
+        response = self.client.get(reverse('talk-list'), data={'event_id': event.id})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['event_id'], talk.event_id)
 
     def test_str(self):
         speaker = SpeakerFactory(first_name='Марк', last_name='Ланговой')
