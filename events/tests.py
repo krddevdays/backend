@@ -1,8 +1,10 @@
+import copy
 import datetime
 from unittest.mock import patch
 
 from django.apps import apps
 from django.test import TestCase
+from django.utils.crypto import get_random_string
 from rest_framework.reverse import reverse
 
 from .apps import EventsConfig
@@ -180,6 +182,7 @@ class EventsTestCase(TestCase):
         request = self.client.post(url, data=bad_phone_request)
         self.assertEqual(request.status_code, 400)
         self.assertIn('phone', request.json())
+        del bad_phone_request
 
         request = self.client.post(url, data=good_request_basic, content_type='application/json')
         self.assertEqual(request.status_code, 200)
@@ -209,15 +212,24 @@ class EventsTestCase(TestCase):
         bad_request_inn['payment_id'] = '77'
         del bad_request_inn['inn']
         err_code_check(QErr.LEGAL, bad_request_inn, 'payment_id')
+        del bad_request_inn
 
         bad_request_legal = good_request_inn.copy()
         bad_request_legal['payment_id'] = '77'
         del bad_request_legal['legal_name']
         err_code_check(QErr.LEGAL, bad_request_legal, 'payment_id')
+        del bad_request_legal
 
-        doubled_email_request = good_request_basic.copy()
+        doubled_email_request = copy.deepcopy(good_request_basic)
         doubled_email_request['tickets'].append(doubled_email_request['tickets'][0])
         err_code_check(QErr.TICKETS_EMAIL_NON_UNIQ, doubled_email_request)
+        del doubled_email_request
+
+        bad_request_ticket_type_id = good_request_basic.copy()
+        bad_request_ticket_type_id['tickets'][0]['type_id'] = get_random_string()
+        err_code_check(QErr.TICKETS_TYPE_ID_NONEXISTS.format(type_id=bad_request_ticket_type_id['tickets'][0]['type_id']),
+                       bad_request_ticket_type_id)
+        del bad_request_ticket_type_id
 
     def test_str(self):
         venue = VenueFactory(name='venue name', address='address')

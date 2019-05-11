@@ -59,8 +59,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
 
         for ticket_request in data['tickets']:
             if (
-                    ticket_request['type_id'] not in seats
-                    or seats[ticket_request['type_id']]['disabled']
+                    seats[ticket_request['type_id']]['disabled']
                     or seats_by_type[ticket_request['type_id']] > seats[ticket_request['type_id']]['free_quantity']
             ):
                 return Response(data={'error': 'Неверные данные для зказа'}, status=status.HTTP_400_BAD_REQUEST)

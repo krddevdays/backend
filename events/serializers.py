@@ -1,3 +1,5 @@
+from collections import Counter
+
 import dateutil.parser
 from django.db import models
 from django.utils import timezone
@@ -92,6 +94,7 @@ class QErr:
     P_ID_NOT_FOUND = 'Не найден payment_id'
     LEGAL = 'Неверные данные для зказа, ИНН и/или наименование организации не указанны'
     TICKETS_EMAIL_NON_UNIQ = 'Email в запросе на покупку билетов не уникальны'
+    TICKETS_TYPE_ID_NONEXISTS = 'Неверный type_id в заказе, {type_id} не существует'
 
 
 class QTicketsOrderSerializer(serializers.Serializer):
@@ -134,6 +137,13 @@ class QTicketsOrderSerializer(serializers.Serializer):
         tickets_emails = [ticket['email'] for ticket in data['tickets']]
         if len(tickets_emails) > len(set(tickets_emails)):
             raise ValidationError(QErr.TICKETS_EMAIL_NON_UNIQ)
+
+        seats_by_type = Counter([el['type_id'] for el in data['tickets']])
+
+        for ticket_request in data['tickets']:
+            if ticket_request['type_id'] not in self.seats_info:
+                raise ValidationError(QErr.TICKETS_TYPE_ID_NONEXISTS.format(type_id=ticket_request['type_id']))
+
         return data
 
     def validate_payment_id(self, payment_id):
