@@ -79,10 +79,6 @@ USE_TZ = True
 # explicitly set format because .isoformat() can return value without microseconds
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ',
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-
-    ),
 }
 
 STATIC_URL = '/static/'
