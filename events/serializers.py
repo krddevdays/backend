@@ -148,7 +148,7 @@ class QTicketsOrderSerializer(serializers.Serializer):
         # email должны быть уникальны в рамках tickets из данного запроса
         tickets_emails = [ticket['email'] for ticket in data['tickets']]
         if len(tickets_emails) > len(set(tickets_emails)):
-            raise ValidationError(QErr.TICKETS_EMAIL_NON_UNIQ)
+            raise ValidationError({'tickets': QErr.TICKETS_EMAIL_NON_UNIQ})
 
         seats_by_type = Counter([el['type_id'] for el in data['tickets']])
 
