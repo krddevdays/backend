@@ -8,10 +8,10 @@ from django.utils.crypto import get_random_string
 from rest_framework.reverse import reverse
 
 from .apps import EventsConfig
+from .exceptions import QErr
 from .factories import EventFactory, VenueFactory, ZoneFactory, ActivityFactory
 from .interfaces import ActivityType, WelcomeActivity
 from .qtickets import QTicketsInfo
-from .serializers import QErr
 
 events_response = {'id': '120', 'is_active': '1', 'name': 'Krasnodar Dev Conf 2019', 'scheme_id': '259',
                    'currency_id': 'RUB',
@@ -104,7 +104,7 @@ class EventsTestCase(TestCase):
 
     def _check_event(self, data: dict, event: EventFactory):
         for field in ('id', 'name', 'short_description', 'full_description', 'ticket_description',
-                  'image', 'image_vk', 'image_facebook'):
+                      'image', 'image_vk', 'image_facebook'):
             self.assertEqual(data[field], getattr(event, field))
         self.assertEqual(data['start_date'], event.start_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
         self.assertEqual(data['finish_date'], event.finish_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
