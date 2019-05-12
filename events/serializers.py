@@ -134,7 +134,7 @@ class QTicketsOrderSerializer(serializers.Serializer):
             if type_id not in self.seats_info:
                 raise ValidationError(QErr.TICKETS_TYPE_ID_NONEXISTS.format(type_id=type_id))
             elif self.seats_info[type_id]['disabled']:
-                raise ValidationError(QErr.TICKETS_TYPE_ID_DISABLED.format(type_id=type_id))
+                raise ValidationError(QErr.TICKETS_TYPE_ID_DISABLED)
             elif seats_by_type[type_id] > self.seats_info[type_id]['free_quantity']:
                 raise ValidationError(QErr.MEST_NEMA.format(type_id=type_id))
 

@@ -264,7 +264,7 @@ class EventsTestCase(TestCase):
         del bad_request_ticket_type_id
 
         seats_response[good_request_basic['tickets'][0]['type_id']]['disabled'] = True
-        err_code_check(QErr.TICKETS_TYPE_ID_DISABLED.format(type_id=good_request_basic['tickets'][0]['type_id']))
+        err_code_check(QErr.TICKETS_TYPE_ID_DISABLED)
         seats_response[good_request_basic['tickets'][0]['type_id']]['disabled'] = False
 
         seats_response[good_request_basic['tickets'][0]['type_id']]['free_quantity'] = 1
