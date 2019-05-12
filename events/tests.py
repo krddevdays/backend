@@ -254,7 +254,7 @@ class EventsTestCase(TestCase):
 
         doubled_email_request = copy.deepcopy(good_request_basic)
         doubled_email_request['tickets'].append(doubled_email_request['tickets'][0])
-        err_code_check(QErr.TICKETS_EMAIL_NON_UNIQ, doubled_email_request, 'tickets')
+        err_code_check(QErr.TICKETS_EMAIL_NON_UNIQ, doubled_email_request)
         del doubled_email_request
 
         bad_request_ticket_type_id = copy.deepcopy(good_request_basic)
