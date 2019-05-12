@@ -4,7 +4,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'just_random_string')
 
-DEBUG = os.environ.get('DEBUG', True)
+DEBUG = os.environ.get('DEBUG') == 'True'
 
 allowed_host = os.environ.get('ALLOWED_HOSTS', '')
 ALLOWED_HOSTS = ('*',) if allowed_host == '' else (allowed_host,)
