@@ -70,8 +70,8 @@ class QTickets:
                 "inn": tickets_data['inn']
             }
 
-        request = self._make_request('POST', f'{self.API_endpoint}orders', json=request_body)
-        return request['data']['payment_url']
+        response = self._make_request('POST', f'{self.API_endpoint}orders', json=request_body)
+        return response['data']['payment_url']
 
 
 QTicketsInfo = QTickets()
