@@ -43,7 +43,7 @@ class QTickets:
         result_json = dict(select=select_fields, flat=flat)
         return self._make_request('GET', f'{self.API_endpoint}shows/{show_id}/seats', json=result_json)['data']
 
-    def get_order_tickets_url(self, tickets_data: dict, juridicial: bool = True) -> str:
+    def get_order_tickets_url(self, tickets_data: dict) -> str:
         request_body = {
             "data": {
                 "client": {
@@ -64,7 +64,7 @@ class QTickets:
         }
         if tickets_data.get('phone'):
             request_body['data']['client']['details']['phone'] = tickets_data['phone']
-        if juridicial:
+        if tickets_data.get('inn'):
             request_body['data']['fields'] = {
                 "legal_name": tickets_data['legal_name'],
                 "inn": tickets_data['inn']

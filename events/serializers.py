@@ -174,7 +174,6 @@ class QTicketsOrderSerializer(serializers.Serializer):
         return payment_id
 
     def order_tickets(self, host: str, external_id: int) -> str:
-        juridicial = False
         order_body = {
             'email': self.validated_data['email'],
             'name': self.validated_data['first_name'],
@@ -198,8 +197,4 @@ class QTicketsOrderSerializer(serializers.Serializer):
         }
         if 'inn' in self.validated_data:
             order_body.update({'legal_name': self.validated_data['legal_name'], 'inn': self.validated_data['inn']})
-            juridicial = True
-        return QTicketsInfo.get_order_tickets_url(
-            tickets_data=order_body,
-            juridicial=juridicial
-        )
+        return QTicketsInfo.get_order_tickets_url(tickets_data=order_body)
