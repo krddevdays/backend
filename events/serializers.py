@@ -122,11 +122,6 @@ class QTicketsOrderSerializer(serializers.Serializer):
         ):
             raise ValidationError(QErr.SALE_NOT_STARTED)
 
-        # email должны быть уникальны в рамках tickets из данного запроса
-        tickets_emails = [ticket['email'] for ticket in data['tickets']]
-        if len(tickets_emails) > len(set(tickets_emails)):
-            raise ValidationError({'tickets': QErr.TICKETS_EMAIL_NON_UNIQ})
-
         seats_by_type = Counter([el['type_id'] for el in data['tickets']])
 
         for ticket_request in data['tickets']:
@@ -139,6 +134,13 @@ class QTicketsOrderSerializer(serializers.Serializer):
                 raise ValidationError(QErr.MEST_NEMA.format(type_id=type_id))
 
         return data
+
+    def validate_tickets(self, tickets):
+        # email должны быть уникальны в рамках tickets из данного запроса
+        tickets_emails = [ticket['email'] for ticket in tickets]
+        if len(tickets_emails) > len(set(tickets_emails)):
+            raise ValidationError(QErr.TICKETS_EMAIL_NON_UNIQ)
+        return tickets
 
     def validate_payment_id(self, payment_id):
         for payment in self.event_info['payments']:
