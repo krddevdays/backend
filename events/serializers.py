@@ -82,7 +82,7 @@ class QErr:
     TICKETS_EMAIL_NON_UNIQ = 'Адреса электронной почты участников должны быть уникальны.' \
                              ' На каждый будет отправлен индивидуальный билет.'
     TICKETS_TYPE_ID_NONEXISTS = 'Неверный type_id в заказе, {type_id} не существует'
-    TICKETS_TYPE_ID_DISABLED = 'Неверный type_id в заказе, {type_id} не доступны для покупки'
+    TICKETS_TYPE_ID_DISABLED = 'Продажа билетов этого типа в данный момент невозможна.'
     MEST_NEMA = 'Для типа {type_id} недостаточно свободных мест'
 
 
