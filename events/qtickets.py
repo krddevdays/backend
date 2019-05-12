@@ -71,7 +71,7 @@ class QTickets:
             }
 
         response = self._make_request('POST', f'{self.API_endpoint}orders', json=request_body)
-        return response['data']['payment_url']
+        return response.get('data', {}).get('payment_url')
 
 
 QTicketsInfo = QTickets()
