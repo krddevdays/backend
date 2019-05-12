@@ -18,6 +18,7 @@ django-cors-headers = "*"
 coreapi = "*"
 python-dotenv = "*"
 django-filter = "*"
+sentry-sdk = "*"
 
 [requires]
 python_version = "3.7"
