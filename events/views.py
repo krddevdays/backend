@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from .models import Event, Activity
 from .qtickets import QTicketsInfo, TicketsSerializer
-from .serializers import EventSerializer, ActivitySerializer
+from .serializers import EventSerializer, ActivitySerializer, QTicketsOrderSerializer
 
 
 class EventFilter(FilterSet):
@@ -43,6 +43,25 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
 
             tickets.is_valid(raise_exception=True)
             return Response(data=tickets.data)
+
+    @action(methods=['POST'], detail=True, serializer_class=QTicketsOrderSerializer)
+    def order(self, *args, **kwargs):
+        event = self.get_object()
+        if event.external_id is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        order = self.get_serializer(event_id=event.external_id, data=self.request.data)
+        order.is_valid(raise_exception=True)
+
+        try:
+            payment_url = order.order_tickets(
+                host=self.request.META.get('HTTP_HOST', 'krd.dev'),
+                external_id=event.external_id
+            )
+        except Exception as e:
+            return Response(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(data={'url': payment_url})
 
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):
