@@ -86,17 +86,22 @@ class QTicketsOrderSerializer(serializers.Serializer):
     inn = serializers.CharField(validators=[check_inn, ], required=False)
     legal_name = serializers.CharField(required=False)
 
+    event_info = None
+    seats_info = None
+    current_show = None
+
     def __init__(self, event_id, instance=None, data=empty, **kwargs):
-        self.event_info = QTicketsInfo.get_event_data(event_id)
+        self._event_id = event_id
+        super().__init__(instance, data, **kwargs)
+
+    def run_validation(self, data=empty):
+        self.event_info = QTicketsInfo.get_event_data(self._event_id)
         self.seats_info = QTicketsInfo.get_seats_data(
             select_fields=["free_quantity", "disabled"],
             show_id=self.event_info['shows'][0]['id'],
             flat=True
         )
         self.current_show = self.event_info['shows'][0]
-        super().__init__(instance, data, **kwargs)
-
-    def run_validation(self, data=empty):
         return super(QTicketsOrderSerializer, self).run_validation(data)
 
     def validate(self, data):
