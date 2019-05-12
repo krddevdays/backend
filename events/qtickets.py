@@ -33,15 +33,45 @@ class QTickets:
             url=self.get_event_url(external_id)
         )['data']
 
-    def get_seats_data(self, show_id: str):
-        return self._make_request('GET', f'{self.API_endpoint}shows/{show_id}/seats', json={
-            "select": [
-                "name",
-                "free_quantity",
-                "price",
-                "disabled"
-            ]
-        })['data']
+    def get_seats_data(self, show_id: str, select_fields=None, flat: bool = False):
+        select_fields = select_fields or [
+            "name",
+            "free_quantity",
+            "price",
+            "disabled"
+        ]
+        result_json = dict(select=select_fields, flat=flat)
+        return self._make_request('GET', f'{self.API_endpoint}shows/{show_id}/seats', json=result_json)['data']
+
+    def get_order_tickets_url(self, tickets_data: dict) -> str:
+        request_body = {
+            "data": {
+                "client": {
+                    "email": tickets_data["email"],
+                    "details": {
+                        "name": tickets_data["name"],
+                        "surname": tickets_data["surname"]
+                    }
+                },
+                "site": {
+                    "host": tickets_data["host"]
+                },
+                "payment_id": tickets_data['payment_id'],
+                "event_id": tickets_data['event_id'],
+                "currency_id": "RUB",
+                "baskets": tickets_data['baskets']
+            }
+        }
+        if tickets_data.get('phone'):
+            request_body['data']['client']['details']['phone'] = tickets_data['phone']
+        if tickets_data.get('inn'):
+            request_body['data']['fields'] = {
+                "legal_name": tickets_data['legal_name'],
+                "inn": tickets_data['inn']
+            }
+
+        response = self._make_request('POST', f'{self.API_endpoint}orders', json=request_body)
+        return response.get('data', {}).get('payment_url')
 
 
 QTicketsInfo = QTickets()
