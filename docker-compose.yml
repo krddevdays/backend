@@ -31,8 +31,6 @@ services:
       - webnet
     volumes:
       - .:/app
-    command: ./manage.py runserver 0.0.0.0:8000
-    entrypoint: ""
 
 networks:
   webnet:
