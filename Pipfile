@@ -22,6 +22,7 @@ python-dateutil = "*"
 python-dotenv = "*"
 django-filter = "*"
 sentry-sdk = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"

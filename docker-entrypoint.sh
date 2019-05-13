@@ -4,4 +4,4 @@ echo "Apply database migration"
 python3 manage.py migrate --noinput
 
 echo "Starting server"
-python3 manage.py runserver 0.0.0.0:8000
+gunicorn krddevdays.wsgi:application --bind 127.0.0.1:8000 --timeout 60
