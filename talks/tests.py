@@ -7,8 +7,8 @@ from events.factories import ActivityFactory, EventFactory
 from events.interfaces import ActivityType
 from events.models import Event
 from talks.apps import TalksConfig
-from talks.factories import TalkFactory, SpeakerFactory
-from talks.models import Talk
+from talks.factories import TalkFactory, SpeakerFactory, DiscussionFactory
+from talks.models import Talk, Discussion
 from users.factories import UserFactory
 from users.models import User
 
@@ -85,6 +85,18 @@ class DiscussionTestClass(TestCase):
         cls.event: Event = EventFactory()
         cls.user: User = UserFactory()
 
+    def test_activity_interface(self):
+        activity = ActivityFactory(type=ActivityType.DISCUSSION)
+        discussion: Discussion = DiscussionFactory(activity=activity)
+        self.assertEqual(discussion.self_link(), f'<a href="/admin/talks/discussion/{discussion.id}/change/">{discussion.title}</a>')
+
+        response = self.client.get(reverse('event-activities', args=(activity.event.id,)))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        obj = data[0]
+        self.assertEqual(obj['type'], 'DISCUSSION')
+
     def test_create(self):
         data = {
             'event': self.event.id,
@@ -98,3 +110,19 @@ class DiscussionTestClass(TestCase):
         self.client.post(reverse('login'), credentials)
         response = self.client.post(reverse('discussion-list'), data=data)
         self.assertEqual(response.status_code, 201)
+
+    def test_vote(self):
+        discussion = DiscussionFactory()
+        response = self.client.post(reverse('discussion-detail', args=(discussion.id,)))
+        self.assertEqual(response.status_code, 403)  # https://github.com/encode/django-rest-framework/issues/5968
+
+        credentials = {'username': self.user.email, 'password': self.user.original_password}
+        self.client.post(reverse('login'), credentials)
+
+        response = self.client.post(reverse('discussion-vote', args=(discussion.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(discussion.votes.count(), 1)
+
+        response = self.client.post(reverse('discussion-vote', args=(discussion.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(discussion.votes.count(), 0)
