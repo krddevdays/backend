@@ -97,6 +97,22 @@ class DiscussionTestClass(TestCase):
         obj = data[0]
         self.assertEqual(obj['type'], 'DISCUSSION')
 
+    def test_list(self):
+        discussion = DiscussionFactory(event=self.event, speaker=self.user)
+        response = self.client.get(reverse('discussion-list'))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        obj = data[0]
+        self.assertEqual(obj['event_id'], self.event.id)
+        self.assertEqual(obj['title'], discussion.title)
+        self.assertEqual(obj['description'], discussion.description)
+        self.assertEqual(obj['votes_count'], 0)
+        speaker = obj['speaker']
+        self.assertEqual(speaker['first_name'], self.user.first_name)
+        self.assertEqual(speaker['last_name'], self.user.last_name)
+        self.assertEqual(speaker['email'], self.user.email)
+
     def test_create(self):
         data = {
             'event': self.event.id,
@@ -126,3 +142,12 @@ class DiscussionTestClass(TestCase):
         response = self.client.post(reverse('discussion-vote', args=(discussion.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(discussion.votes.count(), 0)
+
+    def test_talk_filter(self):
+        event = EventFactory()
+        discussion = DiscussionFactory(event=event)
+        response = self.client.get(reverse('discussion-list'), data={'event_id': event.id})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['event_id'], discussion.event_id)

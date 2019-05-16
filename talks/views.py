@@ -20,11 +20,19 @@ class TalkViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = TalkFilter
 
 
+class DiscussionFilter(FilterSet):
+    class Meta:
+        model = Discussion
+        fields = ('event_id', )
+
+
 class DiscussionViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
                         mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Discussion.objects.all()
     serializer_class = DiscussionSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = DiscussionFilter
 
     def perform_create(self, serializer):
         serializer.save(speaker=self.request.user)
