@@ -1,10 +1,18 @@
 import os
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn=os.environ.get('SENTRY_DSN', ''),
+    integrations=[DjangoIntegration()]
+)
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'just_random_string')
 
-DEBUG = os.environ.get('DEBUG', True)
+DEBUG = os.environ.get('DEBUG') == 'True'
 
 allowed_host = os.environ.get('ALLOWED_HOSTS', '')
 ALLOWED_HOSTS = ('*',) if allowed_host == '' else (allowed_host,)
@@ -18,6 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'phonenumber_field',
+    'django_filters',
 
     'users',
     'events',
@@ -76,7 +86,13 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+# explicitly set format because .isoformat() can return value without microseconds
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ',
+}
+
 STATIC_URL = '/static/'
+STATIC_ROOT = './static/'
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
@@ -84,4 +100,4 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 QTICKETS_ENDPOINT = os.environ.get('QTICKETS_ENDPOINT', '')
 QTICKETS_TOKEN = os.environ.get('QTICKETS_TOKEN', '')
 
-CORS_ORIGIN_ALLOW_ALL=True
+CORS_ORIGIN_ALLOW_ALL = True

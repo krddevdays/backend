@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 
 from events.interfaces import ActivityInterface
-from events.models import Activity
+from events.models import Activity, Event
 
 
 class Speaker(models.Model):
@@ -17,6 +17,7 @@ class Speaker(models.Model):
 
 
 class Talk(ActivityInterface, models.Model):
+    event = models.ForeignKey(Event, on_delete=models.PROTECT, null=True, blank=True)
     activity = models.OneToOneField(Activity, on_delete=models.PROTECT, null=True, blank=True)
     title = models.CharField(max_length=255)
     description = models.TextField()

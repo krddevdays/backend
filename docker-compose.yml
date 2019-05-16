@@ -6,6 +6,8 @@ services:
       POSTGRES_USER: krddevdays
       POSTGRES_PASSWORD: krddevdays
       POSTGRES_DB: krddevdays
+    ports:
+      - 5432:5432
     healthcheck:
       test: ["CMD", "pg_isready -U krddevdays"]
       interval: 30s

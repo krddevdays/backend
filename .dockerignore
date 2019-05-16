@@ -7,3 +7,5 @@ README.md
 shippable.yml
 .git
 /**/__pycache__/
+/static/
+/supervisord.pid

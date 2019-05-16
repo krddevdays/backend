@@ -6,6 +6,7 @@ class ActivityType(enum.Enum):
     TALK = 1
     COFFEE = 2
     LUNCH = 3
+    CLOSE = 4
 
 
 class ActivityInterface:
@@ -20,6 +21,10 @@ class ActivityInterface:
 
 class WelcomeActivity(ActivityInterface):
     title = 'Открытие'
+
+
+class CloseActivity(ActivityInterface):
+    title = 'Закрытие'
 
 
 class CoffeeActivity(ActivityInterface):

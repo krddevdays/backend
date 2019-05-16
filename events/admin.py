@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.widgets import AdminTextareaWidget
 from django.utils.safestring import mark_safe
 
 from .models import Event, Zone, Activity, Venue
@@ -22,10 +23,17 @@ class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'venue')
     inlines = (ActivityInline,)
     fieldsets = (
-        ('', {'fields': (('name', 'venue'),)}),
-        ('', {'fields': (('start_date', 'finish_date'),)}),
+        ('', {'fields': (('name', 'venue'), ('start_date', 'finish_date'))}),
+        ('Descriptions', {'fields': ('short_description', 'full_description', 'ticket_description')}),
+        ('Images', {'fields': ('image', 'image_vk', 'image_facebook')}),
+        ('Call for papers', {'fields': (('cfp_start', 'cfp_finish'), 'cfp_url')}),
         ('QTicket system', {'fields': ('external_id',)})
     )
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name in ('short_description', 'ticket_description'):
+            kwargs['widget'] = AdminTextareaWidget
+        return super(EventAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @admin.register(Activity)
@@ -33,7 +41,7 @@ class ActivityAdmin(admin.ModelAdmin):
     list_display = ('id', 'event', 'type', 'zone', 'start_date', 'finish_date')
     list_filter = ('event', 'zone', 'type')
     fieldsets = (
-        ('', {'fields': (('event', 'zone', 'type'), 'thing', ('start_date', 'finish_date'))}),
+        ('', {'fields': (('event', 'zone', 'type'), ('start_date', 'finish_date'))}),
     )
 
     def get_queryset(self, request):
