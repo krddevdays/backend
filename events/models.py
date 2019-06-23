@@ -29,7 +29,7 @@ class Event(models.Model):
     name = models.CharField(max_length=100)
     short_description = models.CharField(max_length=500)
     full_description = models.TextField(null=True, blank=True)
-    ticket_description = models.CharField(max_length=500, null=True, blank=True)
+    ticket_description = models.TextField(null=True, blank=True)
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
     venue = models.ForeignKey(Venue, on_delete=models.PROTECT)
