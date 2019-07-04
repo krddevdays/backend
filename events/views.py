@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, DateTimeFilter
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -54,14 +55,16 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         order.is_valid(raise_exception=True)
 
         try:
-            payment_url = order.order_tickets(
+            qticket_response = order.order_tickets(
                 host=self.request.META.get('HTTP_HOST', 'krd.dev'),
                 external_id=event.external_id
             )
+            required_fields = ('cancel_url', 'payment_url', 'price', 'currency_id', 'reserved_to', 'id')
+            response = {key: value for key, value in qticket_response.items() if key in required_fields}
         except Exception as e:
             return Response(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(data={'url': payment_url})
+        return JsonResponse(response)
 
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):
