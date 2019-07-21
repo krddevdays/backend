@@ -138,7 +138,7 @@ class QTicketsOrderSerializer(serializers.Serializer):
 
     def validate_payment_id(self, payment_id):
         for payment in self.event_info['payments']:
-            if payment['id'] == payment_id:
+            if str(payment['id']) == payment_id:
                 break
         else:
             raise ValidationError(QErr.P_ID_NOT_FOUND)
