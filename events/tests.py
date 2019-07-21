@@ -9,8 +9,8 @@ from rest_framework.reverse import reverse
 
 from .apps import EventsConfig
 from .exceptions import QErr
-from .factories import EventFactory, VenueFactory, ZoneFactory, ActivityFactory
-from .interfaces import ActivityType, WelcomeActivity
+from .factories import EventFactory, VenueFactory, ZoneFactory, ActivityFactory, SponsorFactory
+from .interfaces import ActivityType, WelcomeActivity, SponsorType
 from .qtickets import QTicketsInfo
 
 events_response = {'id': '120', 'is_active': '1', 'name': 'Krasnodar Dev Conf 2019', 'scheme_id': '259',
@@ -187,6 +187,20 @@ class EventsTestCase(TestCase):
         self.assertEqual(obj['thing'], {'title': 'Открытие'})
         obj = next((item for item in data if item['type'] == 'TALK'))
         self.assertIsNone(obj['thing'])
+
+    def test_sponsors(self):
+        factories = {
+            'SPONSOR': SponsorFactory(event=self.event, type=SponsorType.SPONSOR),
+            'INFORMATIONAL_PARTNER': SponsorFactory(event=self.event, type=SponsorType.INFORMATIONAL_PARTNER)
+        }
+        response = self.client.get(reverse('event-sponsors', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        for category, type_id in SponsorType.items():
+            self.assertIn(category, data)
+            items = data[category]
+            self.assertEqual(len(items), 1)
+            self.assertEqual(items[0]['name'], factories[category].name)
 
     def test_tickets(self):
         pass

@@ -48,3 +48,11 @@ class ActivityFactory(DjangoModelFactory):
 
     class Meta:
         model = 'events.Activity'
+
+
+class SponsorFactory(DjangoModelFactory):
+    event = SubFactory(EventFactory)
+    name = FuzzyText()
+
+    class Meta:
+        model = 'events.Sponsor'
