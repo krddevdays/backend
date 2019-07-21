@@ -21,7 +21,7 @@ class Talk(ActivityInterface, models.Model):
     event = models.ForeignKey(Event, on_delete=models.PROTECT, null=True, blank=True)
     activity = models.OneToOneField(Activity, on_delete=models.PROTECT, null=True, blank=True)
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     speaker = models.ForeignKey(Speaker, on_delete=models.PROTECT)
     presentation_online = models.URLField(null=True, blank=True)
     presentation_offline = models.URLField(null=True, blank=True)

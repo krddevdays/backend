@@ -92,6 +92,15 @@ seats_response = {
     'vtoroj-den-1;1': {'seat_id': 'vtoroj-den-1;1', 'admission': True, 'free_quantity': 350, 'disabled': False},
     'dva-dnya-1;1': {'seat_id': 'dva-dnya-1;1', 'admission': True, 'free_quantity': 0, 'disabled': True}}
 
+correct_response = {
+    "id": "10623",
+    "payment_url": "https://new.qtickets.ru/pay/C6u9U7rhRJ",
+    "cancel_url": "https://new.qtickets.ru/cancel-order/C6u9U7rhRJ/ce853b2f315ce49c3f3eebece00ab0d2",
+    "reserved_to": "2019-07-05T13:50:49+03:00",
+    "price": "1000",
+    "currency_id": "RUB"
+}
+
 
 class EventsTestCase(TestCase):
     @classmethod
@@ -184,7 +193,7 @@ class EventsTestCase(TestCase):
 
     @patch.object(QTicketsInfo, 'get_event_data', return_value=events_response)
     @patch.object(QTicketsInfo, 'get_seats_data', return_value=seats_response)
-    @patch.object(QTicketsInfo, 'get_order_tickets_url', return_value={'url': 'https://test.com/fail'})
+    @patch.object(QTicketsInfo, 'get_order_tickets_url', return_value=correct_response)
     def test_order(self, *args, **kwargs):
         def err_code_check(q_err_code, request_data=None, error_field='non_field_errors'):
             request = self.client.post(url, data=request_data or good_request_basic, content_type='application/json')
@@ -194,6 +203,7 @@ class EventsTestCase(TestCase):
             self.assertEqual(body[error_field], [q_err_code])
 
         url = reverse('event-order', args=(self.event.id,))
+        required_fields = ('cancel_url', 'payment_url', 'price', 'currency_id', 'reserved_to', 'id')
         response = self.client.post(url)
         self.assertEqual(response.status_code, 404)
         self.event.external_id = 120
@@ -217,7 +227,9 @@ class EventsTestCase(TestCase):
 
         request = self.client.post(url, data=good_request_basic, content_type='application/json')
         self.assertEqual(request.status_code, 200)
-        self.assertIn('url', request.json())
+        content = request.json()
+        for field in required_fields:
+            self.assertIn(field, content)
 
         events_response['is_active'] = '0'
         err_code_check(QErr.NOT_ACTIVE)
@@ -238,7 +250,8 @@ class EventsTestCase(TestCase):
 
         request = self.client.post(url, data=good_request_inn, content_type='application/json')
         self.assertEqual(request.status_code, 200)
-        self.assertIn('url', request.json())
+        for field in required_fields:
+            self.assertIn(field, content)
 
         bad_request_inn = good_request_inn.copy()
         bad_request_inn['payment_id'] = '77'
