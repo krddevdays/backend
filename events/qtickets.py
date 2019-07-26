@@ -170,6 +170,7 @@ class TicketsSerializer(serializers.Serializer):
             sale_start_date=show['sale_start_date'],
             sale_finish_date=show['sale_finish_date'],
             payments=extract_payments(),
-            types=extract_types()
+            types=extract_types(),
+            agree_url=show_data['agree_url']
         )
         super().__init__(data=prepared_data)
