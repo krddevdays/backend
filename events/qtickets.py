@@ -115,7 +115,8 @@ class TicketsSerializer(serializers.Serializer):
             return [
                 {
                     'id': payment['id'],
-                    'type': 'invoice' if payment['handler'] == 'invoice' else 'card'
+                    'type': 'invoice' if payment['handler'] == 'invoice' else 'card',
+                    'agree_url': payment['agree_url'],
                 }
                 for payment in show_data['payments']
                 if payment['is_active']
@@ -170,7 +171,6 @@ class TicketsSerializer(serializers.Serializer):
             sale_start_date=show['sale_start_date'],
             sale_finish_date=show['sale_finish_date'],
             payments=extract_payments(),
-            types=extract_types(),
-            agree_url=show_data['agree_url']
+            types=extract_types()
         )
         super().__init__(data=prepared_data)
