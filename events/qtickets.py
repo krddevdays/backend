@@ -101,6 +101,7 @@ class SeatsTypesSerializer(serializers.Serializer):
 class PaymentSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     type = serializers.CharField()
+    agree_url = serializers.CharField()
 
 
 class TicketsSerializer(serializers.Serializer):
