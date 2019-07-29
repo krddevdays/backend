@@ -99,4 +99,10 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 QTICKETS_ENDPOINT = os.environ.get('QTICKETS_ENDPOINT', '')
 QTICKETS_TOKEN = os.environ.get('QTICKETS_TOKEN', '')
 
-CORS_ORIGIN_ALLOW_ALL = True
+cors_list = os.environ.get('CORS_LIST', '')
+
+if cors_list == '':
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ORIGIN_WHITELIST = cors_list.split(',')
+    CORS_ALLOW_CREDENTIALS = True
