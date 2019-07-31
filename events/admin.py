@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin.widgets import AdminTextareaWidget
 from django.utils.safestring import mark_safe
 
-from .models import Event, Zone, Activity, Venue, Sponsor
+from .models import Event, Zone, Activity, Venue, Partner
 
 
 class ActivityInline(admin.TabularInline):
@@ -62,8 +62,8 @@ class VenueAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Sponsor)
-class SponsorAdmin(admin.ModelAdmin):
+@admin.register(Partner)
+class PartnerAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'event', 'order')
     ordering = ('order',)
     list_filter = ('type', 'event')

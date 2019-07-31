@@ -14,15 +14,15 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Sponsor',
+            name='Partner',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('type', django_enumfield.db.fields.EnumField(default=0, enum=events.interfaces.SponsorType)),
+                ('type', django_enumfield.db.fields.EnumField(default=0, enum=events.interfaces.PartnerType)),
                 ('name', models.CharField(max_length=100)),
                 ('image', models.URLField()),
                 ('link', models.URLField()),
                 ('order', models.PositiveSmallIntegerField(default=0)),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sponsors', to='events.Event')),
+                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='partners', to='events.Event')),
             ],
         ),
     ]

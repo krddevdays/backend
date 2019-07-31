@@ -50,9 +50,9 @@ class ActivityFactory(DjangoModelFactory):
         model = 'events.Activity'
 
 
-class SponsorFactory(DjangoModelFactory):
+class PartnerFactory(DjangoModelFactory):
     event = SubFactory(EventFactory)
     name = FuzzyText()
 
     class Meta:
-        model = 'events.Sponsor'
+        model = 'events.Partner'
