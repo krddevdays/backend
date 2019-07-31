@@ -5,9 +5,10 @@ from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
+from events.interfaces import PartnerType
 from .models import Event, Activity
 from .qtickets import QTicketsInfo, TicketsSerializer
-from .serializers import EventSerializer, ActivitySerializer, QTicketsOrderSerializer
+from .serializers import EventSerializer, ActivitySerializer, QTicketsOrderSerializer, PartnerSerializer
 
 
 class EventFilter(FilterSet):
@@ -31,6 +32,14 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         event = self.get_object()
         serializer = ActivitySerializer(event.activities.all(), many=True)
         return Response(serializer.data)
+
+    @action(detail=True)
+    def partners(self, *args, **kwargs):
+        event = self.get_object()
+        qs = event.partners.order_by('order').all()
+        result = {category: PartnerSerializer(qs.filter(type=type_id), many=True).data
+                  for category, type_id in PartnerType.items()}
+        return Response(result)
 
     @action(detail=True)
     def tickets(self, *args, **kwargs):

@@ -19,17 +19,22 @@ def user_required(view_func):
     return _wrapped_view
 
 
+def decode_json(request):
+    if request.content_type == 'application/json':
+        try:
+            return json.loads(request.body)
+        except:
+            return HttpResponseBadRequest('Cannot decode body.')
+    else:
+        return request.POST
+
+
 class UserView(View):
     def get(self, request, *args, **kwargs):
         return JsonResponse(UserSerializer(request.user).data)
 
     def patch(self, request, *args, **kwargs):
-        try:
-            data = json.loads(request.body)
-        except:
-            return HttpResponseBadRequest('Cannot decode body.')
-
-        serializer = UserSerializer(instance=request.user, data=data, partial=True)
+        serializer = UserSerializer(instance=request.user, data=decode_json(request), partial=True)
         if serializer.is_valid():
             instance = serializer.save()
             return JsonResponse(UserSerializer(instance).data)
@@ -38,7 +43,7 @@ class UserView(View):
 
 
 def registration(request):
-    form = UserCreationForm(request.POST)
+    form = UserCreationForm(decode_json(request))
     if form.is_valid():
         user = form.save()
         auth_login(request, user)
@@ -47,7 +52,7 @@ def registration(request):
 
 
 def login(request):
-    form = AuthenticationForm(request, request.POST)
+    form = AuthenticationForm(request, decode_json(request))
     if form.is_valid():
         auth_login(request, form.get_user())
         return JsonResponse({})

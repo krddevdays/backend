@@ -9,8 +9,9 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 
+from events.interfaces import PartnerType
 from .exceptions import QErr
-from .models import Event, Activity, ActivityType, Venue, Zone
+from .models import Event, Activity, ActivityType, Venue, Zone, Partner
 from .qtickets import QTicketsInfo
 from .validators import check_inn
 
@@ -66,6 +67,14 @@ class ActivitySerializer(serializers.ModelSerializer):
         else:
             serializer = BaseActivitySerializer
         return serializer(thing).data
+
+
+class PartnerSerializer(serializers.ModelSerializer):
+    type = EnumField(choices=PartnerType.choices())
+
+    class Meta:
+        model = Partner
+        fields = ('type', 'name', 'image', 'link', 'order')
 
 
 class TicketsSerializer(serializers.Serializer):

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin.widgets import AdminTextareaWidget
 from django.utils.safestring import mark_safe
 
-from .models import Event, Zone, Activity, Venue
+from .models import Event, Zone, Activity, Venue, Partner
 
 
 class ActivityInline(admin.TabularInline):
@@ -60,3 +60,10 @@ class VenueAdmin(admin.ModelAdmin):
     fieldsets = (
         ('', {'fields': (('name', 'address'), ('latitude', 'longitude'))}),
     )
+
+
+@admin.register(Partner)
+class PartnerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'type', 'event', 'order')
+    ordering = ('order',)
+    list_filter = ('type', 'event')
