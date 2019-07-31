@@ -34,7 +34,7 @@ class UserView(View):
         return JsonResponse(UserSerializer(request.user).data)
 
     def patch(self, request, *args, **kwargs):
-        serializer = UserSerializer(instance=request.user, data=decode_json(request))
+        serializer = UserSerializer(instance=request.user, data=decode_json(request), partial=True)
         if serializer.is_valid():
             instance = serializer.save()
             return JsonResponse(UserSerializer(instance).data)

@@ -29,6 +29,8 @@ class UserTestCase(TestCase):
         credentials = {
             'username': 'random',
             'email': 'random@random.com',
+            'first_name': get_random_string(),
+            'last_name': get_random_string(),
             'password1': self.password,
             'password2': self.password
         }
@@ -38,6 +40,8 @@ class UserTestCase(TestCase):
         user = get_user(self.client)
         self.assertEqual(user.email, credentials['email'])
         self.assertEqual(user.username, credentials['username'])
+        self.assertEqual(user.first_name, credentials['first_name'])
+        self.assertEqual(user.last_name, credentials['last_name'])
 
         credentials['password2'] = 'bad password'
         response = self.client.post(reverse('registration'), credentials, content_type='application/json')
