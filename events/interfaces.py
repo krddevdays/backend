@@ -9,6 +9,11 @@ class ActivityType(enum.Enum):
     CLOSE = 4
 
 
+class PartnerType(enum.Enum):
+    SPONSOR = 0
+    INFORMATIONAL = 1
+
+
 class ActivityInterface:
     title = None
 
