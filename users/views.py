@@ -29,7 +29,7 @@ class UserView(View):
         except:
             return HttpResponseBadRequest('Cannot decode body.')
 
-        serializer = UserSerializer(instance=request.user, data=data)
+        serializer = UserSerializer(instance=request.user, data=data, partial=True)
         if serializer.is_valid():
             instance = serializer.save()
             return JsonResponse(UserSerializer(instance).data)
