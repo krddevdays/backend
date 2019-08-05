@@ -18,6 +18,7 @@ class TalkTestCase(TestCase):
         self.assertEqual(data['title'], talk.title)
         self.assertEqual(data['description'], talk.description)
         self.assertEqual(data['video'], talk.video)
+        self.assertEqual(data['poster_image'], talk.poster_image)
         self.assertEqual(data['presentation_offline'], talk.presentation_offline)
         self.assertEqual(data['speaker']['first_name'], talk.speaker.first_name)
         self.assertEqual(data['speaker']['last_name'], talk.speaker.last_name)

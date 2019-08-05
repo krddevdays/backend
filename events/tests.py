@@ -310,9 +310,10 @@ class EventsTestCase(TestCase):
         self.assertEqual(str(venue), 'venue name, address')
         zone = ZoneFactory(name='zone name', venue=venue)
         self.assertEqual(str(zone), 'zone name (venue name)')
-        event = EventFactory(name='event name', start_date=datetime.datetime(2019, 4, 20))
+        event = EventFactory(name='event name', start_date=datetime.datetime(2019, 4, 20, tzinfo=datetime.timezone.utc))
         self.assertEqual(str(event), 'event name, 20.04.2019')
-        activity = ActivityFactory(event=event, zone=zone, start_date=datetime.datetime(2019, 4, 20, 20, 52))
+        activity = ActivityFactory(
+            event=event, zone=zone, start_date=datetime.datetime(2019, 4, 20, 20, 52, tzinfo=datetime.timezone.utc))
         self.assertEqual(str(activity), 'event name, 20.04.2019 - zone name (venue name) - 20.04.2019-20:52')
 
     def test_activity_interface(self):
