@@ -35,7 +35,7 @@ class DiscussionViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
     filterset_class = DiscussionFilter
 
     def perform_create(self, serializer):
-        serializer.save(speaker=self.request.user)
+        serializer.save(author=self.request.user)
 
     @detail_route(methods=('POST',))
     def vote(self, request, pk=None):

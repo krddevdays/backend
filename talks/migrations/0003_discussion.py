@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('activity', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='events.Activity')),
                 ('event', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='events.Event')),
-                ('speaker', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='discussions', to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='discussions', to=settings.AUTH_USER_MODEL)),
                 ('votes', models.ManyToManyField(blank=True, to=settings.AUTH_USER_MODEL)),
             ],
             bases=(events.interfaces.ActivityInterface, models.Model),

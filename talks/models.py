@@ -33,11 +33,11 @@ class Talk(ActivityInterface, models.Model):
 
 
 class Discussion(ActivityInterface, models.Model):
-    event = models.ForeignKey(Event, on_delete=models.PROTECT, null=True, blank=True)
+    event = models.ForeignKey(Event, on_delete=models.PROTECT)
     activity = models.OneToOneField(Activity, on_delete=models.PROTECT, null=True, blank=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
-    speaker = models.ForeignKey(User, on_delete=models.PROTECT, related_name='discussions')
+    author = models.ForeignKey(User, on_delete=models.PROTECT, related_name='discussions')
     votes = models.ManyToManyField(User, blank=True)
 
     def self_link(self):

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from events.models import Event
 from talks.models import Talk, Speaker, Discussion
 from users.serializers import UserSerializer
 
@@ -19,12 +20,12 @@ class TalkSerializer(serializers.ModelSerializer):
 
 
 class DiscussionSerializer(serializers.ModelSerializer):
+    event_id = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all(), source='event')
     votes_count = serializers.SerializerMethodField()
-    speaker = UserSerializer(read_only=True)
 
     class Meta:
         model = Discussion
-        fields = ('event_id', 'title', 'description', 'speaker', 'votes_count')
+        fields = ('event_id', 'title', 'description', 'votes_count')
 
     def get_votes_count(self, obj: Discussion) -> int:
         return obj.votes.count()

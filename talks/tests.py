@@ -99,7 +99,7 @@ class DiscussionTestClass(TestCase):
         self.assertEqual(obj['type'], 'DISCUSSION')
 
     def test_list(self):
-        discussion = DiscussionFactory(event=self.event, speaker=self.user)
+        discussion = DiscussionFactory(event=self.event, author=self.user)
         response = self.client.get(reverse('discussion-list'))
         self.assertEqual(response.status_code, 200)
         data = response.json()
@@ -109,14 +109,10 @@ class DiscussionTestClass(TestCase):
         self.assertEqual(obj['title'], discussion.title)
         self.assertEqual(obj['description'], discussion.description)
         self.assertEqual(obj['votes_count'], 0)
-        speaker = obj['speaker']
-        self.assertEqual(speaker['first_name'], self.user.first_name)
-        self.assertEqual(speaker['last_name'], self.user.last_name)
-        self.assertEqual(speaker['email'], self.user.email)
 
     def test_create(self):
         data = {
-            'event': self.event.id,
+            'event_id': self.event.id,
             'title': get_random_string(),
             'description': get_random_string()
         }
@@ -128,6 +124,15 @@ class DiscussionTestClass(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.post(reverse('discussion-list'), data=data)
         self.assertEqual(response.status_code, 201)
+
+        bad_data = {
+            'title': get_random_string(),
+            'description': get_random_string()
+        }
+        response = self.client.post(reverse('discussion-list'), data=bad_data)
+        self.assertEqual(response.status_code, 400)
+        errors = response.json()
+        self.assertIn('event_id', errors)
 
     def test_vote(self):
         discussion = DiscussionFactory()
