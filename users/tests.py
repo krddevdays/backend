@@ -26,13 +26,16 @@ class UserTestCase(TestCase):
         self.assertEqual(apps.get_app_config('users').name, 'users')
 
     def test_registration(self):
+        email = 'Random@Random.com'
         credentials = {
-            'username': 'random@random.com',
+            'username': email,
             'password1': self.password,
             'password2': self.password
         }
         response = self.client.post(reverse('registration'), credentials)
         self.assertEqual(response.status_code, 200)
+        user = get_user(self.client)
+        self.assertEqual(user.username, email.lower())
         self.assertTrue(self._is_authenticated())
 
         credentials['password2'] = 'bad password'

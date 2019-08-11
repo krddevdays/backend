@@ -9,6 +9,7 @@ User = get_user_model()
 
 class UserFactory(DjangoModelFactory):
     email = FuzzyText(suffix='@email.org', chars=string.ascii_lowercase)
+    username = FuzzyText(suffix='@email.org', chars=string.ascii_lowercase)
 
     class Meta:
         model = 'users.User'
