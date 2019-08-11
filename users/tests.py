@@ -69,7 +69,7 @@ class UserTestCase(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
-        credentials = {'username': self.user.username, 'password': self.password}
+        credentials = {'username': self.user.username, 'password': self.user.original_password}
         self.client.post(reverse('login'), credentials, content_type='application/json')
         self.assertTrue(self._is_authenticated())
 

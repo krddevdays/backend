@@ -123,8 +123,9 @@ class DiscussionTestClass(TestCase):
         response = self.client.post(reverse('discussion-list'), data=data)
         self.assertEqual(response.status_code, 403)  # https://github.com/encode/django-rest-framework/issues/5968
 
-        credentials = {'username': self.user.email, 'password': self.user.original_password}
-        self.client.post(reverse('login'), credentials)
+        credentials = {'username': self.user.username, 'password': self.user.original_password}
+        response = self.client.post(reverse('login'), credentials)
+        self.assertEqual(response.status_code, 200)
         response = self.client.post(reverse('discussion-list'), data=data)
         self.assertEqual(response.status_code, 201)
 
@@ -133,7 +134,7 @@ class DiscussionTestClass(TestCase):
         response = self.client.post(reverse('discussion-detail', args=(discussion.id,)))
         self.assertEqual(response.status_code, 403)  # https://github.com/encode/django-rest-framework/issues/5968
 
-        credentials = {'username': self.user.email, 'password': self.user.original_password}
+        credentials = {'username': self.user.username, 'password': self.user.original_password}
         self.client.post(reverse('login'), credentials)
 
         response = self.client.post(reverse('discussion-vote', args=(discussion.id,)))
