@@ -3,9 +3,11 @@ from django.db import models
 
 
 class User(AbstractUser):
-    USERNAME_FIELD = 'email'
-    EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = ('username',)
-
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
-    username = models.CharField(max_length=150)
+    work = models.CharField(max_length=100, null=True, blank=True)
+    position = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self) -> str:
+        return self.email

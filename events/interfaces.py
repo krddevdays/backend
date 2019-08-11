@@ -10,6 +10,11 @@ class ActivityType(enum.Enum):
     DISCUSSION = 5
 
 
+class PartnerType(enum.Enum):
+    SPONSOR = 0
+    INFORMATIONAL = 1
+
+
 class ActivityInterface:
     title = None
 

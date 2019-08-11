@@ -15,7 +15,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'just_random_string')
 DEBUG = os.environ.get('DEBUG') == 'True'
 
 allowed_host = os.environ.get('ALLOWED_HOSTS', '')
-ALLOWED_HOSTS = ('*',) if allowed_host == '' else (allowed_host,)
+ALLOWED_HOSTS = ('*',) if allowed_host == '' else allowed_host.split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -99,4 +99,10 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 QTICKETS_ENDPOINT = os.environ.get('QTICKETS_ENDPOINT', '')
 QTICKETS_TOKEN = os.environ.get('QTICKETS_TOKEN', '')
 
-CORS_ORIGIN_ALLOW_ALL = True
+cors_list = os.environ.get('CORS_LIST', '')
+
+if cors_list == '':
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ORIGIN_WHITELIST = cors_list.split(',')
+    CORS_ALLOW_CREDENTIALS = True

@@ -15,7 +15,7 @@ class TalkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Talk
-        fields = ('event_id', 'title', 'description', 'speaker', 'video', 'presentation_offline')
+        fields = ('event_id', 'title', 'description', 'poster_image', 'speaker', 'video', 'presentation_offline')
 
 
 class DiscussionSerializer(serializers.ModelSerializer):
