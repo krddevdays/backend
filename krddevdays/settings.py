@@ -96,7 +96,7 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.CsrfExemptSessionAuthentication',
+        'krddevdays.settings.CsrfExemptSessionAuthentication',
         'rest_framework.authentication.BasicAuthentication'
     ),
 }
