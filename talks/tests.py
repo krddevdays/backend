@@ -109,6 +109,7 @@ class DiscussionTestClass(TestCase):
         self.assertEqual(obj['title'], discussion.title)
         self.assertEqual(obj['description'], discussion.description)
         self.assertEqual(obj['votes_count'], 0)
+        self.assertEqual(obj['is_author'], False)
 
     def test_create(self):
         data = {
@@ -124,6 +125,8 @@ class DiscussionTestClass(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.post(reverse('discussion-list'), data=data)
         self.assertEqual(response.status_code, 201)
+        data = response.json()
+        self.assertEqual(data['is_author'], True)
 
         bad_data = {
             'title': get_random_string(),
@@ -145,10 +148,16 @@ class DiscussionTestClass(TestCase):
         response = self.client.post(reverse('discussion-vote', args=(discussion.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(discussion.votes.count(), 1)
+        response = self.client.get(reverse('discussion-detail', args=(discussion.id,)))
+        data = response.json()
+        self.assertEqual(data['my_vote'], True)
 
         response = self.client.post(reverse('discussion-vote', args=(discussion.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(discussion.votes.count(), 0)
+        response = self.client.get(reverse('discussion-detail', args=(discussion.id,)))
+        data = response.json()
+        self.assertEqual(data['my_vote'], False)
 
     def test_talk_filter(self):
         event = EventFactory()

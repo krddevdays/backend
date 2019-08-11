@@ -22,10 +22,18 @@ class TalkSerializer(serializers.ModelSerializer):
 class DiscussionSerializer(serializers.ModelSerializer):
     event_id = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all(), source='event')
     votes_count = serializers.SerializerMethodField()
+    is_author = serializers.SerializerMethodField()
+    my_vote = serializers.SerializerMethodField()
 
     class Meta:
         model = Discussion
-        fields = ('event_id', 'title', 'description', 'votes_count')
+        fields = ('id', 'event_id', 'title', 'description', 'votes_count', 'is_author', 'my_vote')
 
     def get_votes_count(self, obj: Discussion) -> int:
         return obj.votes.count()
+
+    def get_is_author(self, obj: Discussion) -> bool:
+        return obj.author.id == self.context['request'].user.id
+
+    def get_my_vote(self, obj: Discussion) -> bool:
+        return self.context['request'].user in obj.votes.all()
