@@ -7,6 +7,7 @@ class ActivityType(enum.Enum):
     COFFEE = 2
     LUNCH = 3
     CLOSE = 4
+    DISCUSSION = 5
 
 
 class PartnerType(enum.Enum):

@@ -1,6 +1,7 @@
 import os
 
 import sentry_sdk
+from rest_framework.authentication import SessionAuthentication
 from sentry_sdk.integrations.django import DjangoIntegration
 
 sentry_sdk.init(
@@ -85,9 +86,19 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
+
+
 # explicitly set format because .isoformat() can return value without microseconds
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'krddevdays.settings.CsrfExemptSessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ),
 }
 
 STATIC_URL = '/static/'

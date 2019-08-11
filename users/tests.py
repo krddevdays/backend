@@ -12,10 +12,7 @@ from users.factories import UserFactory
 class UserTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.password = get_random_string()
         cls.user = UserFactory()
-        cls.user.set_password(cls.password)
-        cls.user.save()
 
     def _is_authenticated(self):
         user = get_user(self.client)
@@ -31,8 +28,8 @@ class UserTestCase(TestCase):
             'email': 'random@random.com',
             'first_name': get_random_string(),
             'last_name': get_random_string(),
-            'password1': self.password,
-            'password2': self.password
+            'password1': self.user.original_password,
+            'password2': self.user.original_password
         }
         response = self.client.post(reverse('registration'), credentials, content_type='application/json')
         self.assertEqual(response.status_code, 200)
@@ -53,13 +50,13 @@ class UserTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn(NON_FIELD_ERRORS, response.json())
 
-        credentials = {'username': self.user.username, 'password': self.password}
+        credentials = {'username': self.user.username, 'password': self.user.original_password}
         response = self.client.post(reverse('login'), credentials, content_type='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertTrue(self._is_authenticated())
 
     def test_logout(self):
-        credentials = {'username': self.user.username, 'password': self.password}
+        credentials = {'username': self.user.username, 'password': self.user.original_password}
         self.client.post(reverse('login'), credentials, content_type='application/json')
         self.assertTrue(self._is_authenticated())
 
@@ -72,7 +69,7 @@ class UserTestCase(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
-        credentials = {'username': self.user.username, 'password': self.password}
+        credentials = {'username': self.user.username, 'password': self.user.original_password}
         self.client.post(reverse('login'), credentials, content_type='application/json')
         self.assertTrue(self._is_authenticated())
 

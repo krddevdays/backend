@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from events.interfaces import ActivityInterface
 from events.models import Activity, Event
+from users.models import User
 
 
 class Speaker(models.Model):
@@ -29,3 +30,15 @@ class Talk(ActivityInterface, models.Model):
 
     def self_link(self):
         return f"<a href=\"{reverse('admin:talks_talk_change', args=(self.id,))}\">{self.title}</a>"
+
+
+class Discussion(ActivityInterface, models.Model):
+    event = models.ForeignKey(Event, on_delete=models.PROTECT)
+    activity = models.OneToOneField(Activity, on_delete=models.PROTECT, null=True, blank=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.PROTECT, related_name='discussions')
+    votes = models.ManyToManyField(User, blank=True)
+
+    def self_link(self):
+        return f"<a href=\"{reverse('admin:talks_discussion_change', args=(self.id,))}\">{self.title}</a>"
