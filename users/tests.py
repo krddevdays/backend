@@ -24,7 +24,7 @@ class UserTestCase(TestCase):
 
     def test_registration(self):
         credentials = {
-            'username': 'random',
+            'username': 'Random',
             'email': 'random@random.com',
             'first_name': get_random_string(),
             'last_name': get_random_string(),
@@ -36,7 +36,7 @@ class UserTestCase(TestCase):
         self.assertTrue(self._is_authenticated())
         user = get_user(self.client)
         self.assertEqual(user.email, credentials['email'])
-        self.assertEqual(user.username, credentials['username'])
+        self.assertEqual(user.username, credentials['username'].lower())
         self.assertEqual(user.first_name, credentials['first_name'])
         self.assertEqual(user.last_name, credentials['last_name'])
 
