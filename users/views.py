@@ -2,12 +2,11 @@ import json
 from functools import wraps
 
 from django.contrib.auth import login as auth_login, logout as auth_logout
-from django.contrib.auth.forms import AuthenticationForm
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.views import View
 
 from users.serializers import UserSerializer
-from .forms import UserCreationForm
+from .forms import UserCreationForm, AuthenticationForm
 
 
 def user_required(view_func):
@@ -16,6 +15,7 @@ def user_required(view_func):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
         return view_func(request, *args, **kwargs)
+
     return _wrapped_view
 
 
