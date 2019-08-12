@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
+from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm, AuthenticationForm as DjangoAuthenticationForm
 
 
 class UserCreationForm(DjangoUserCreationForm):
@@ -16,3 +16,10 @@ class UserCreationForm(DjangoUserCreationForm):
     class Meta(DjangoUserCreationForm.Meta):
         model = get_user_model()
         fields = ('username', 'email', 'first_name', 'last_name')
+
+
+class AuthenticationForm(DjangoAuthenticationForm):
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username:
+            return username.lower()
