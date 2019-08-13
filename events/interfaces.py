@@ -7,6 +7,12 @@ class ActivityType(enum.Enum):
     COFFEE = 2
     LUNCH = 3
     CLOSE = 4
+    DISCUSSION = 5
+
+
+class PartnerType(enum.Enum):
+    SPONSOR = 0
+    INFORMATIONAL = 1
 
 
 class ActivityInterface:

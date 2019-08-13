@@ -1,6 +1,7 @@
 import os
 
 import sentry_sdk
+from rest_framework.authentication import SessionAuthentication
 from sentry_sdk.integrations.django import DjangoIntegration
 
 sentry_sdk.init(
@@ -15,7 +16,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'just_random_string')
 DEBUG = os.environ.get('DEBUG') == 'True'
 
 allowed_host = os.environ.get('ALLOWED_HOSTS', '')
-ALLOWED_HOSTS = ('*',) if allowed_host == '' else (allowed_host,)
+ALLOWED_HOSTS = ('*',) if allowed_host == '' else allowed_host.split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -86,9 +87,19 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
+
+
 # explicitly set format because .isoformat() can return value without microseconds
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'krddevdays.settings.CsrfExemptSessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ),
 }
 
 STATIC_URL = '/static/'
@@ -100,4 +111,10 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 QTICKETS_ENDPOINT = os.environ.get('QTICKETS_ENDPOINT', '')
 QTICKETS_TOKEN = os.environ.get('QTICKETS_TOKEN', '')
 
-CORS_ORIGIN_ALLOW_ALL = True
+cors_list = os.environ.get('CORS_LIST', '')
+
+if cors_list == '':
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ORIGIN_WHITELIST = cors_list.split(',')
+    CORS_ALLOW_CREDENTIALS = True

@@ -4,6 +4,9 @@ from factory import SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyText
 
+from events.factories import EventFactory
+from users.factories import UserFactory
+
 
 class SpeakerFactory(DjangoModelFactory):
     first_name = FuzzyText()
@@ -21,3 +24,13 @@ class TalkFactory(DjangoModelFactory):
 
     class Meta:
         model = 'talks.Talk'
+
+
+class DiscussionFactory(DjangoModelFactory):
+    event = SubFactory(EventFactory)
+    title = FuzzyText()
+    description = FuzzyText()
+    author = SubFactory(UserFactory)
+
+    class Meta:
+        model = 'talks.Discussion'
