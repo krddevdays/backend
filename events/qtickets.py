@@ -71,7 +71,7 @@ class QTickets:
             }
 
         response = self._make_request('POST', f'{self.API_endpoint}orders', json=request_body)
-        return response.get('data', {}).get('payment_url')
+        return response.get('data', {})
 
 
 QTicketsInfo = QTickets()
@@ -101,6 +101,7 @@ class SeatsTypesSerializer(serializers.Serializer):
 class PaymentSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     type = serializers.CharField()
+    agree_url = serializers.CharField()
 
 
 class TicketsSerializer(serializers.Serializer):
@@ -115,7 +116,8 @@ class TicketsSerializer(serializers.Serializer):
             return [
                 {
                     'id': payment['id'],
-                    'type': 'invoice' if payment['handler'] == 'invoice' else 'card'
+                    'type': 'invoice' if payment['handler'] == 'invoice' else 'card',
+                    'agree_url': payment['agree_url'],
                 }
                 for payment in show_data['payments']
                 if payment['is_active']

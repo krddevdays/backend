@@ -1,12 +1,14 @@
+from django.http import JsonResponse
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, DateTimeFilter
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
+from events.interfaces import PartnerType
 from .models import Event, Activity
 from .qtickets import QTicketsInfo, TicketsSerializer
-from .serializers import EventSerializer, ActivitySerializer, QTicketsOrderSerializer
+from .serializers import EventSerializer, ActivitySerializer, QTicketsOrderSerializer, PartnerSerializer
 
 
 class EventFilter(FilterSet):
@@ -32,6 +34,14 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
     @action(detail=True)
+    def partners(self, *args, **kwargs):
+        event = self.get_object()
+        qs = event.partners.order_by('order').all()
+        result = {category: PartnerSerializer(qs.filter(type=type_id), many=True).data
+                  for category, type_id in PartnerType.items()}
+        return Response(result)
+
+    @action(detail=True)
     def tickets(self, *args, **kwargs):
         event = self.get_object()
         if event.external_id is None:
@@ -54,14 +64,16 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         order.is_valid(raise_exception=True)
 
         try:
-            payment_url = order.order_tickets(
+            qticket_response = order.order_tickets(
                 host=self.request.META.get('HTTP_HOST', 'krd.dev'),
                 external_id=event.external_id
             )
+            required_fields = ('cancel_url', 'payment_url', 'price', 'currency_id', 'reserved_to', 'id')
+            response = {key: value for key, value in qticket_response.items() if key in required_fields}
         except Exception as e:
             return Response(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(data={'url': payment_url})
+        return JsonResponse(response)
 
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):

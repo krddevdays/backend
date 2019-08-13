@@ -2,7 +2,7 @@ from django import forms
 from django.db import models
 from django_enumfield import enum
 
-from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity, CloseActivity
+from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity, CloseActivity, PartnerType
 from .qtickets import QTicketsInfo
 
 
@@ -29,7 +29,7 @@ class Event(models.Model):
     name = models.CharField(max_length=100)
     short_description = models.CharField(max_length=500)
     full_description = models.TextField(null=True, blank=True)
-    ticket_description = models.CharField(max_length=500, null=True, blank=True)
+    ticket_description = models.TextField(null=True, blank=True)
     start_date = models.DateTimeField()
     finish_date = models.DateTimeField()
     venue = models.ForeignKey(Venue, on_delete=models.PROTECT)
@@ -77,3 +77,15 @@ class Activity(models.Model):
             ActivityType.LUNCH: LunchActivity(),
         }
         return items.get(self.type)
+
+
+class Partner(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='partners')
+    type = enum.EnumField(PartnerType)
+    name = models.CharField(max_length=100)
+    image = models.URLField()
+    link = models.URLField()
+    order = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self):
+        return self.name
