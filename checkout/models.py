@@ -32,8 +32,9 @@ class Order(ContactsMixin, models.Model):
             order = Order(event=event, qticket_id=item['id'])
         order.response = item
         order.email = client['email']
-        order.first_name = client['details']['name']
-        order.last_name = client['details']['surname']
+        if client['details']:
+            order.first_name = client['details']['name']
+            order.last_name = client['details']['surname']
         order.save()
 
         to_remove = set(order.tickets.values_list('qticket_id', flat=True))
