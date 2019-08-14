@@ -28,7 +28,8 @@ def link_user_qtickets(request):
 
 
 def webhook(request):
-    if hmac.new(settings.QTICKET_SECRET, request.body, hashlib.sha1).hexdigest() != request.headers.get('X-Signature'):
+    signature = hmac.new(settings.QTICKETS_SECRET.encode(), request.body, hashlib.sha1).hexdigest()
+    if signature != request.headers.get('X-Signature'):
         return HttpResponseBadRequest()
 
     payload = json.loads(request.body)
