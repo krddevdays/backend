@@ -9,6 +9,7 @@ from events.factories import EventFactory
 
 class OrderFactory(DjangoModelFactory):
     event = SubFactory(EventFactory)
+    qticket_id = FuzzyInteger(low=0, high=1000)
     email = FuzzyText(suffix='@email.org', chars=string.ascii_lowercase)
     first_name = FuzzyText()
     last_name = FuzzyText()
