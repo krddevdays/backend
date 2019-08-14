@@ -25,6 +25,7 @@ class Order(ContactsMixin, models.Model):
 class Ticket(ContactsMixin, models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='tickets')
     user = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+    qticket_id = models.PositiveIntegerField()
 
     def __str__(self):
         return f'Order {self.order_id}/{self.email}'

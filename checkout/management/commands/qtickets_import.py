@@ -17,5 +17,5 @@ class Command(BaseCommand):
                 last_name=client['details']['surname'])
             for ticket in tickets:
                 Ticket.objects.create(
-                    order=order, email=ticket['client_email'],
+                    order=order, email=ticket['client_email'], qticket_id=ticket['id'],
                     first_name=ticket['client_name'], last_name=ticket['client_surname'])
