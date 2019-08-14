@@ -110,6 +110,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # QTickets
 QTICKETS_ENDPOINT = os.environ.get('QTICKETS_ENDPOINT', '')
 QTICKETS_TOKEN = os.environ.get('QTICKETS_TOKEN', '')
+QTICKETS_SECRET = os.environ.get('QTICKETS_SECRET', '')
 
 cors_list = os.environ.get('CORS_LIST', '')
 

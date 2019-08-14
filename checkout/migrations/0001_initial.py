@@ -24,6 +24,7 @@ class Migration(migrations.Migration):
                 ('first_name', models.CharField(blank=True, max_length=30, null=True)),
                 ('last_name', models.CharField(blank=True, max_length=150, null=True)),
                 ('response', django.contrib.postgres.fields.jsonb.JSONField(default=dict)),
+                ('qticket_id', models.PositiveIntegerField(db_index=True)),
                 ('event', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='events.Event')),
             ],
             options={
@@ -38,7 +39,7 @@ class Migration(migrations.Migration):
                 ('first_name', models.CharField(blank=True, max_length=30, null=True)),
                 ('last_name', models.CharField(blank=True, max_length=150, null=True)),
                 ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tickets', to='checkout.Order')),
-                ('qticket_id', models.PositiveIntegerField()),
+                ('qticket_id', models.PositiveIntegerField(db_index=True)),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
             ],
             options={
