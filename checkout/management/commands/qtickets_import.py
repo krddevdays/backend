@@ -10,4 +10,4 @@ class Command(BaseCommand):
         event = Event.objects.get(pk=1)
         qtickets = QTicketsInfo.get_order_list(event.external_id)
         for item in qtickets:
-            Order.add(item)
+            Order.add_or_update(item)

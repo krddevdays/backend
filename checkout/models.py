@@ -23,17 +23,33 @@ class Order(ContactsMixin, models.Model):
         return f'{self.id} ({self.email})'
 
     @classmethod
-    def add(cls, item):
+    def add_or_update(cls, item):
         event = Event.objects.get(external_id=item['event_id'])
         client = item['client']
-        tickets = item['baskets']
-        order = Order.objects.create(
-            event=event, response=item, email=client['email'], qticket_id=item['id'],
-            first_name=client['details']['name'], last_name=client['details']['surname'])
-        for ticket in tickets:
-            Ticket.objects.create(
-                order=order, email=ticket['client_email'], qticket_id=ticket['id'],
-                first_name=ticket['client_name'], last_name=ticket['client_surname'])
+        try:
+            order = Order.objects.get(qticket_id=item['id'])
+        except Order.DoesNotExist:
+            order = Order(event=event, qticket_id=item['id'])
+        order.response = item
+        order.email = client['email']
+        order.first_name = client['details']['name']
+        order.last_name = client['details']['surname']
+        order.save()
+
+        to_remove = set(order.tickets.values_list('qticket_id', flat=True))
+        for ticket in item['baskets']:
+            to_remove -= {ticket['id']}
+            try:
+                original = Ticket.objects.get(qticket_id=ticket['id'])
+            except Ticket.DoesNotExist:
+                original = Ticket(qticket_id=ticket['id'], order=order)
+            if original.email != ticket['client_email']:
+                original.email = ticket['client_email']
+                original.user = None
+            original.first_name = ticket['client_name']
+            original.last_name = ticket['client_surname']
+            original.save()
+        Ticket.objects.filter(qticket_id__in=list(to_remove)).delete()
 
 
 class Ticket(ContactsMixin, models.Model):
