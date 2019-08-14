@@ -43,6 +43,16 @@ class QTickets:
         result_json = dict(select=select_fields, flat=flat)
         return self._make_request('GET', f'{self.API_endpoint}shows/{show_id}/seats', json=result_json)['data']
 
+    def get_order_list(self, event_id: int):
+        body = {
+            'where': [
+                {'column': 'event_id', 'value': event_id}
+            ]
+        }
+        response = self._make_request('GET', f'{self.API_endpoint}orders', json=body)
+        result = [item for item in response['data'] if item['event_id'] == event_id]
+        return result
+
     def get_order_tickets_url(self, tickets_data: dict) -> str:
         request_body = {
             "data": {
