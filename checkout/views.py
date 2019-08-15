@@ -7,6 +7,7 @@ from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpRespo
 from django.shortcuts import get_object_or_404
 
 from checkout.models import Ticket, Order
+from checkout.serializers import UserTicketsSerializer
 
 
 def link_user_qtickets(request):
@@ -25,6 +26,10 @@ def link_user_qtickets(request):
         return JsonResponse({})
     else:
         return HttpResponseNotFound()
+
+
+def user_tickets(request):
+    return JsonResponse(UserTicketsSerializer(request.user.tickets.all(), many=True).data, safe=False)
 
 
 def webhook(request):

@@ -55,7 +55,7 @@ class Order(ContactsMixin, models.Model):
 
 class Ticket(ContactsMixin, models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='tickets')
-    user = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True, related_name='tickets')
     qticket_id = models.PositiveIntegerField(db_index=True)
 
     def __str__(self):

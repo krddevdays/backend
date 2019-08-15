@@ -38,3 +38,22 @@ class CheckoutTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.ticket.refresh_from_db()
         self.assertEqual(self.ticket.user_id, user.id)
+
+
+class TicketsTestCase(TestCase):
+    def test_my_tickets(self):
+        url = reverse('my_tickets')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+        user = UserFactory()
+        self.client.force_login(user, settings.AUTHENTICATION_BACKENDS[0])
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 0)
+
+        self.ticket = TicketFactory(user=user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
