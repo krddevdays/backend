@@ -16,15 +16,36 @@ class TicketInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'email', 'event', 'created_at', 'updated_at', 'deleted_at', 'payed_at')
     search_fields = ('qticket_id', 'email', 'first_name', 'last_name')
+    readonly_fields = ('email', 'qticket_id', 'event', 'first_name', 'last_name',
+                       'created_at', 'updated_at', 'payed_at', 'deleted_at', 'response')
     list_filter = ('event',)
     inlines = (TicketInline,)
+    fieldsets = (
+        (None, {
+            'fields': (
+                ('email', 'qticket_id', 'event'),
+                ('first_name', 'last_name'),
+                ('created_at', 'updated_at', 'payed_at', 'deleted_at'),
+                ('response',)
+            )}),)
 
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
     list_display = ('email', 'first_name', 'last_name', 'order_link', 'user_link', 'type', 'created_at', 'updated_at', 'deleted_at', 'get_payed_at')
     search_fields = ('qticket_id', 'email', 'first_name', 'last_name')
+    readonly_fields = ('email', 'qticket_id', 'order', 'first_name', 'last_name',
+                       'created_at', 'updated_at', 'deleted_at', 'pdf_url', 'passbook_url', 'type', 'price')
     list_filter = ('type', 'order__event', 'order__payed_at')
+    fieldsets = (
+        (None, {
+            'fields': (
+                ('user', 'qticket_id'),
+                ('email', 'first_name', 'last_name'),
+                ('created_at', 'updated_at', 'deleted_at'),
+            )}),
+        (None, {'fields': (('pdf_url', 'passbook_url'), ('type', 'price'))})
+    )
 
     def order_link(self, obj: Ticket):
         link = reverse('admin:checkout_order_change', args=(obj.order_id,))
