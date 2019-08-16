@@ -23,7 +23,7 @@ def link_user_qtickets(request):
     if ticket and ticket.email == data.get('email'):
         ticket.user = request.user
         ticket.save()
-        return JsonResponse({})
+        return JsonResponse(UserTicketsSerializer(ticket).data)
     else:
         return HttpResponseNotFound()
 
