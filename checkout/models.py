@@ -42,7 +42,7 @@ class Order(ContactsMixin, models.Model):
             order = Order(event=event, qticket_id=item['id'])
         order.response = item
         order._unpack(item, Order.qticket_fields)
-        order.email = client['email']
+        order.email = client['email'].lower()
         if client['details']:
             order.first_name = client['details']['name']
             order.last_name = client['details']['surname']
@@ -55,8 +55,9 @@ class Order(ContactsMixin, models.Model):
                 original = Ticket.objects.get(qticket_id=ticket['id'])
             except Ticket.DoesNotExist:
                 original = Ticket(qticket_id=ticket['id'], order=order)
-            if original.email != ticket['client_email']:
-                original.email = ticket['client_email']
+            email = ticket['client_email'].lower()
+            if original.email != email:
+                original.email = email
                 original.user = None
             original._unpack(ticket, Ticket.qticket_fields)
             original.save()

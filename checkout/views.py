@@ -20,10 +20,10 @@ def link_user_qtickets(request):
         return HttpResponseBadRequest('Cannot decode body.')
 
     ticket = get_object_or_404(Ticket, qticket_id=data.get('id'))
-    if ticket and ticket.email == data.get('email'):
+    if ticket and ticket.email == data.get('email', '').lower():
         ticket.user = request.user
         ticket.save()
-        return JsonResponse({})
+        return JsonResponse(UserTicketsSerializer(ticket).data)
     else:
         return HttpResponseNotFound()
 
