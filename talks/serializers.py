@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from events.models import Event
 from talks.models import Talk, Speaker, Discussion
@@ -28,6 +29,11 @@ class DiscussionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Discussion
         fields = ('id', 'event_id', 'title', 'description', 'votes_count', 'is_author', 'my_vote')
+
+    def validate_event_id(self, value: Event):
+        if value.discussion_start is None:
+            raise ValidationError('There are no round tables at the event.')
+        return value
 
     def get_votes_count(self, obj: Discussion) -> int:
         return obj.votes.count()

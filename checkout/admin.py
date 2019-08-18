@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.contrib.admin import BooleanFieldListFilter
 from django.template.defaultfilters import safe
 from django.urls import reverse
 
+from checkout.filters import NotNullBooleanFieldListFilter
 from checkout.models import Order, Ticket
 
 
@@ -37,7 +37,7 @@ class TicketAdmin(admin.ModelAdmin):
     search_fields = ('qticket_id', 'email', 'first_name', 'last_name')
     readonly_fields = ('email', 'qticket_id', 'order', 'first_name', 'last_name',
                        'created_at', 'updated_at', 'deleted_at', 'pdf_url', 'passbook_url', 'type', 'price')
-    list_filter = ('type', 'order__event', 'order__payed_at', ('user', BooleanFieldListFilter))
+    list_filter = ('type', 'order__event', 'order__payed_at', ('user', NotNullBooleanFieldListFilter))
     fieldsets = (
         (None, {
             'fields': (

@@ -1,5 +1,6 @@
 from django.apps import apps
 from django.test import TestCase
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from rest_framework.reverse import reverse
 
@@ -83,7 +84,7 @@ class TalkTestCase(TestCase):
 class DiscussionTestClass(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.event: Event = EventFactory()
+        cls.event: Event = EventFactory(discussion_start=timezone.now())
         cls.user: User = UserFactory()
 
     def test_activity_interface(self):
@@ -137,8 +138,27 @@ class DiscussionTestClass(TestCase):
         errors = response.json()
         self.assertIn('event_id', errors)
 
+    def test_start_finish_dates(self):
+        event = EventFactory()
+        data = {
+            'event_id': event.id,
+            'title': get_random_string(),
+            'description': get_random_string()
+        }
+        credentials = {'username': self.user.username, 'password': self.user.original_password}
+        response = self.client.post(reverse('login'), credentials)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(reverse('discussion-list'), data=data)
+        self.assertEqual(response.status_code, 400)
+
+        event.discussion_start = timezone.now()
+        event.discussion_finish = timezone.now()
+        event.save()
+        response = self.client.post(reverse('discussion-list'), data=data)
+        self.assertEqual(response.status_code, 400)
+
     def test_vote(self):
-        discussion = DiscussionFactory()
+        discussion = DiscussionFactory(event=self.event)
         response = self.client.post(reverse('discussion-detail', args=(discussion.id,)))
         self.assertEqual(response.status_code, 403)  # https://github.com/encode/django-rest-framework/issues/5968
 

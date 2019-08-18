@@ -40,6 +40,8 @@ class Event(models.Model):
     cfp_start = models.DateTimeField(null=True, blank=True)
     cfp_finish = models.DateTimeField(null=True, blank=True)
     cfp_url = models.URLField(null=True, blank=True)
+    discussion_start = models.DateTimeField(null=True, blank=True)
+    discussion_finish = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.name}, {self.start_date:%d.%m.%Y}'
