@@ -90,13 +90,13 @@ class Ticket(ContactsMixin, models.Model):
     refunded_at = models.DateTimeField(null=True, blank=True)
 
     qticket_fields = {
-        **{item: item for item in ('created_at', 'updated_at', 'deleted_at', 'pdf_url', 'passbook_url',
-                                   'price', 'refunded_at', 'client_phone')},
         **{
-            'first_name': 'client_name',
-            'last_name': 'client_surname',
-            'type': 'seat_id',
-        }
+              'first_name': 'client_name',
+              'last_name': 'client_surname',
+              'type': 'seat_id',
+          },
+          **{item: item for item in ('created_at', 'updated_at', 'deleted_at', 'pdf_url', 'passbook_url',
+                                   'price', 'refunded_at', 'client_phone')}
     }
 
     def __str__(self):
