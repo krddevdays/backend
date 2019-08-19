@@ -9,6 +9,7 @@ class ContactsMixin(models.Model):
     email = models.EmailField(db_index=True)
     first_name = models.CharField(max_length=30, null=True, blank=True)
     last_name = models.CharField(max_length=150, null=True, blank=True)
+    client_phone = models.CharField(max_length=20, null=True, blank=True)
     qticket_id = models.PositiveIntegerField(db_index=True)
     created_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
@@ -19,15 +20,30 @@ class ContactsMixin(models.Model):
 
     def _unpack(self, response, fields):
         for key, mapping in fields.items():
-            setattr(self, key, response[mapping])
+            obj = response
+            try:
+                while '.' in mapping:
+                    path, mapping = mapping.split('.', 1)
+                    obj = obj[path]
+                else:
+                    value = obj[mapping]
+            except:
+                value = None
+            setattr(self, key, value)
 
 
 class Order(ContactsMixin, models.Model):
     event = models.ForeignKey(Event, on_delete=models.PROTECT)
     response = JSONField(default=dict)
     payed_at = models.DateTimeField(null=True, blank=True)
+    reserved_to = models.DateTimeField(null=True, blank=True)
+    reserved = models.BooleanField(default=False)
 
-    qticket_fields = {item: item for item in ('created_at', 'updated_at', 'deleted_at', 'payed_at')}
+    qticket_fields = {
+        **{item: item for item in ('created_at', 'updated_at', 'deleted_at', 'payed_at', 'reserved_to',
+                                   'reserved')},
+        **{'client_phone': 'client.details.phone'}
+    }
 
     def __str__(self):
         return f'{self.id} ({self.email})'
@@ -71,9 +87,11 @@ class Ticket(ContactsMixin, models.Model):
     passbook_url = models.URLField(null=True, blank=True)
     type = models.CharField(max_length=40, null=True, blank=True)
     price = models.PositiveIntegerField(null=True, blank=True)
+    refunded_at = models.DateTimeField(null=True, blank=True)
 
     qticket_fields = {
-        **{item: item for item in ('created_at', 'updated_at', 'deleted_at', 'pdf_url', 'passbook_url', 'price')},
+        **{item: item for item in ('created_at', 'updated_at', 'deleted_at', 'pdf_url', 'passbook_url',
+                                   'price', 'refunded_at', 'client_phone')},
         **{
             'first_name': 'client_name',
             'last_name': 'client_surname',
