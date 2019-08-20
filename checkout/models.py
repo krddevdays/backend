@@ -37,7 +37,7 @@ class Order(ContactsMixin, models.Model):
     response = JSONField(default=dict)
     payed_at = models.DateTimeField(null=True, blank=True)
     reserved_to = models.DateTimeField(null=True, blank=True)
-    reserved = models.BooleanField(default=False)
+    reserved = models.BooleanField(default=False, null=True)
 
     qticket_fields = {
         **{item: item for item in ('created_at', 'updated_at', 'deleted_at', 'payed_at', 'reserved_to',
