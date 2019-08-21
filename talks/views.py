@@ -1,4 +1,3 @@
-from django.http import HttpResponseBadRequest
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import viewsets, mixins, permissions
@@ -7,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from talks.models import Talk, Discussion
-from .serializers import TalkSerializer, DiscussionSerializer
+from .serializers import TalkSerializer, ExtendedDiscussionSerializer
 
 
 class TalkFilter(FilterSet):
@@ -32,12 +31,12 @@ class DiscussionFilter(FilterSet):
 class DiscussionViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
                         mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Discussion.objects.all()
-    serializer_class = DiscussionSerializer
+    serializer_class = ExtendedDiscussionSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DiscussionFilter
 
-    def perform_create(self, serializer: DiscussionSerializer):
+    def perform_create(self, serializer: ExtendedDiscussionSerializer):
         if (serializer.validated_data['event'].discussion_finish is not None) and \
            (timezone.now() > serializer.validated_data['event'].discussion_finish):
             raise ValidationError('Discussion submission closed')

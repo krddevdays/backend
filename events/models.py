@@ -2,7 +2,8 @@ from django import forms
 from django.db import models
 from django_enumfield import enum
 
-from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity, CloseActivity, PartnerType
+from events.interfaces import ActivityType, WelcomeActivity, CoffeeActivity, LunchActivity, CloseActivity, PartnerType, \
+    DiscussionActivity
 from .qtickets import QTicketsInfo
 
 
@@ -77,6 +78,7 @@ class Activity(models.Model):
             ActivityType.CLOSE: CloseActivity(),
             ActivityType.COFFEE: CoffeeActivity(),
             ActivityType.LUNCH: LunchActivity(),
+            ActivityType.DISCUSSION: self.discussion if hasattr(self, 'discussion') else DiscussionActivity()
         }
         return items.get(self.type)
 

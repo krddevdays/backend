@@ -39,3 +39,7 @@ class CoffeeActivity(ActivityInterface):
 
 class LunchActivity(ActivityInterface):
     title = 'Обед'
+
+
+class DiscussionActivity(ActivityInterface):
+    title = 'Круглый стол'
