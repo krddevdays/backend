@@ -17,4 +17,5 @@ class TalkAdmin(admin.ModelAdmin):
 
 @admin.register(Discussion)
 class DiscussionAdmin(admin.ModelAdmin):
+    save_as = True
     pass
