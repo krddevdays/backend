@@ -168,6 +168,10 @@ class TicketsSerializer(serializers.Serializer):
                         'current_value': seats['price'],
                         'default_value': prices_dict[_zone['zone_id']]['default_price'],
                         'modifiers': extract_modifiers(prices_dict[_zone['zone_id']]['modifiers'])
+                    } if _zone['zone_id'] in prices_dict else {
+                        'current_value': seats['price'],
+                        'default_value': seats['price'],
+                        'modifiers': []
                     }
                 }
                 for _zone in seats_data.values()
