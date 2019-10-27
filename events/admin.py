@@ -24,6 +24,7 @@ class EventAdmin(admin.ModelAdmin):
     inlines = (ActivityInline,)
     fieldsets = (
         ('', {'fields': (('name', 'venue'), ('start_date', 'finish_date'), ('discussion_start', 'discussion_finish'))}),
+        ('', {'fields': ('draft', 'published', 'canceled')}),
         ('Descriptions', {'fields': ('short_description', 'full_description', 'ticket_description')}),
         ('Images', {'fields': ('image', 'image_vk', 'image_facebook')}),
         ('Call for papers', {'fields': (('cfp_start', 'cfp_finish'), 'cfp_url')}),

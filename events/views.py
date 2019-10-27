@@ -21,7 +21,7 @@ class EventFilter(FilterSet):
 
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Event.objects.order_by('-start_date').all()
+    queryset = Event.objects.order_by('-start_date').filter(draft=False)
     serializer_class = EventSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = EventFilter

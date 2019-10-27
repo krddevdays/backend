@@ -43,6 +43,9 @@ class Event(models.Model):
     cfp_url = models.URLField(null=True, blank=True)
     discussion_start = models.DateTimeField(null=True, blank=True)
     discussion_finish = models.DateTimeField(null=True, blank=True)
+    draft = models.BooleanField(default=False)
+    published = models.BooleanField(default=False)
+    canceled = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.name}, {self.start_date:%d.%m.%Y}'

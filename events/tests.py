@@ -149,6 +149,11 @@ class EventsTestCase(TestCase):
         data = response.json()
         self._check_event(data, self.event)
 
+    def test_event_draft(self):
+        draft_event = EventFactory(draft=True)
+        response = self.client.get(reverse('event-detail', args=(draft_event.id,)))
+        self.assertEqual(response.status_code, 404)
+
     def test_ordering(self):
         first_event = EventFactory(start_date=datetime.datetime(2019, 2, 1, tzinfo=datetime.timezone.utc))
         second_event = EventFactory(start_date=datetime.datetime(2019, 3, 1, tzinfo=datetime.timezone.utc))
