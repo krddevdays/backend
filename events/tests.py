@@ -9,8 +9,8 @@ from rest_framework.reverse import reverse
 
 from .apps import EventsConfig
 from .exceptions import QErr
-from .factories import EventFactory, VenueFactory, ZoneFactory, ActivityFactory, PartnerFactory
-from .interfaces import ActivityType, WelcomeActivity, PartnerType
+from .factories import EventFactory, VenueFactory, ZoneFactory, ActivityFactory, PartnerFactory, UserFactory
+from .interfaces import ActivityType, WelcomeActivity, PartnerType, EventStatusType
 from .qtickets import QTicketsInfo
 
 events_response = {'id': '120', 'is_active': '1', 'name': 'Krasnodar Dev Conf 2019', 'scheme_id': '259',
@@ -110,10 +110,11 @@ class EventsTestCase(TestCase):
         ZoneFactory(order=0, venue=venue)
         ZoneFactory(order=1, venue=venue)
         cls.event = EventFactory(start_date=date, venue=venue)
+        cls.draft_event = EventFactory(status=EventStatusType.DRAFT, start_date=date, venue=venue)
 
     def _check_event(self, data: dict, event: EventFactory):
         for field in ('id', 'name', 'short_description', 'full_description', 'ticket_description',
-                      'image', 'image_vk', 'image_facebook'):
+                      'image', 'image_vk', 'image_facebook', 'status'):
             self.assertEqual(data[field], getattr(event, field))
         self.assertEqual(data['start_date'], event.start_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
         self.assertEqual(data['finish_date'], event.finish_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
@@ -142,6 +143,19 @@ class EventsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(len(data), 2)
+
+    def test_draft_event_unauthorized(self):
+        response = self.client.get(reverse('event-detail', args=(self.draft_event.id,)))
+        self.assertEqual(response.status_code, 404)
+
+    def test_event_authorized(self):
+        for user in UserFactory(is_staff=True), UserFactory(draft_viewer=True):
+            self.client.force_login(user)
+            response = self.client.get(reverse('event-detail', args=(self.draft_event.id,)))
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            self._check_event(data, self.draft_event)
+            self.client.logout()
 
     def test_event(self):
         response = self.client.get(reverse('event-detail', args=(self.event.id,)))

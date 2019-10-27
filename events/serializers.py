@@ -46,7 +46,8 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = ('id', 'name', 'short_description', 'full_description', 'ticket_description',
                   'image', 'image_vk', 'image_facebook', 'start_date', 'finish_date', 'venue',
-                  'cfp_start', 'cfp_finish', 'cfp_url', 'discussion_start', 'discussion_finish')
+                  'cfp_start', 'cfp_finish', 'cfp_url', 'discussion_start', 'discussion_finish',
+                  'status')
 
 
 class ActivitySerializer(serializers.ModelSerializer):
