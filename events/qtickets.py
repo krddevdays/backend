@@ -135,7 +135,17 @@ class TicketsSerializer(serializers.Serializer):
             return [
                 {
                     'id': payment['id'],
-                    'type': 'invoice' if payment['handler'] == 'invoice' else 'card',
+                    'type': 'invoice',
+                    'agree_url': payment['agree_url'],
+                } if payment['handler'] == 'invoice' else
+                {
+                    'id': payment['id'],
+                    'type': 'free',
+                    'agree_url': payment['agree_url'],
+                } if payment['handler'] == 'free' else
+                {
+                    'id': payment['id'],
+                    'type': 'card',
                     'agree_url': payment['agree_url'],
                 }
                 for payment in show_data['payments']
