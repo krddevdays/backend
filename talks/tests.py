@@ -25,11 +25,14 @@ class TalkTestCase(TestCase):
         self.assertEqual(data['video'], talk.video)
         self.assertEqual(data['poster_image'], talk.poster_image)
         self.assertEqual(data['presentation_offline'], talk.presentation_offline)
-        self.assertEqual(data['speaker']['first_name'], talk.speaker.first_name)
-        self.assertEqual(data['speaker']['last_name'], talk.speaker.last_name)
-        self.assertEqual(data['speaker']['avatar'], talk.speaker.avatar)
-        self.assertEqual(data['speaker']['work'], talk.speaker.work)
-        self.assertEqual(data['speaker']['position'], talk.speaker.position)
+        self.assertEqual(len(data['speakers']), 1)
+        speaker = data['speakers'][0]
+        expected = talk.speakers.first()
+        self.assertEqual(speaker['first_name'], expected.first_name)
+        self.assertEqual(speaker['last_name'], expected.last_name)
+        self.assertEqual(speaker['avatar'], expected.avatar)
+        self.assertEqual(speaker['work'], expected.work)
+        self.assertEqual(speaker['position'], expected.position)
 
     def test_apps(self):
         self.assertEqual(TalksConfig.name, 'talks')
