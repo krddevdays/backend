@@ -4,7 +4,6 @@ from django_enumfield import enum
 class EventStatusType(enum.Enum):
     DRAFT = 0
     PUBLISHED = 1
-    CANCELED = 2
 
 
 class ActivityType(enum.Enum):
