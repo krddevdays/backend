@@ -29,7 +29,8 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.request.user.is_authenticated and self.request.user.can_see_drafts:
+        user = self.request.user
+        if user.is_authenticated and (user.is_staff or user.has_perm('events.view_draft')):
             return qs.all()
         return qs.exclude(status=EventStatusType.DRAFT)
 

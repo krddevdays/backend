@@ -3,6 +3,7 @@ import datetime
 from unittest.mock import patch
 
 from django.apps import apps
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.utils.crypto import get_random_string
 from rest_framework.reverse import reverse
@@ -149,8 +150,10 @@ class EventsTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_event_authorized(self):
-        for user in UserFactory(is_staff=True), UserFactory(draft_viewer=True):
+        for idx, user in enumerate([UserFactory(is_staff=True), UserFactory()]):
             self.client.force_login(user)
+            if idx == 1:
+                user.user_permissions.add(Permission.objects.get(codename='view_draft'))
             response = self.client.get(reverse('event-detail', args=(self.draft_event.id,)))
             self.assertEqual(response.status_code, 200)
             data = response.json()

@@ -45,6 +45,9 @@ class Event(models.Model):
     discussion_finish = models.DateTimeField(null=True, blank=True)
     status = enum.EnumField(EventStatusType)
 
+    class Meta:
+        permissions = [('view_draft', 'Can view the draft event'), ]
+
     def __str__(self):
         return f'{self.name}, {self.start_date:%d.%m.%Y}'
 

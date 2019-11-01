@@ -9,11 +9,5 @@ class User(AbstractUser):
     work = models.CharField(max_length=100, null=True, blank=True)
     position = models.CharField(max_length=100, null=True, blank=True)
 
-    draft_viewer = models.BooleanField(default=False)
-
-    @property
-    def can_see_drafts(self) -> bool:
-        return self.is_staff or self.draft_viewer
-
     def __str__(self) -> str:
         return self.email
