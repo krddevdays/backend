@@ -6,8 +6,17 @@ from django.db import migrations
 import events.interfaces
 
 
-class Migration(migrations.Migration):
+def forwards(apps, schema_editor):
+    # We get the model from the versioned app registry;
+    # if we directly import it, it'll be the wrong version
+    Event = apps.get_model("events", "Event")
+    db_alias = schema_editor.connection.alias
+    for event in Event.objects.using(db_alias).all():
+        event.status = events.interfaces.EventStatusType.PUBLISHED
+        event.save()
 
+
+class Migration(migrations.Migration):
     dependencies = [
         ('events', '0011_auto_20190818_1321'),
     ]
@@ -15,11 +24,12 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='event',
-            options={'permissions': [('view_draft', 'Can view the draft event')]},
+            options={'permissions': [('view_draft', 'Can view draft event')]},
         ),
         migrations.AddField(
             model_name='event',
             name='status',
             field=django_enumfield.db.fields.EnumField(default=0, enum=events.interfaces.EventStatusType),
         ),
+        migrations.RunPython(forwards, migrations.RunPython.noop)
     ]

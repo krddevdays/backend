@@ -46,7 +46,7 @@ class Event(models.Model):
     status = enum.EnumField(EventStatusType)
 
     class Meta:
-        permissions = [('view_draft', 'Can view the draft event'), ]
+        permissions = [('view_draft', 'Can view draft event'), ]
 
     def __str__(self):
         return f'{self.name}, {self.start_date:%d.%m.%Y}'
