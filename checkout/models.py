@@ -10,7 +10,7 @@ class ContactsMixin(models.Model):
     first_name = models.CharField(max_length=30, null=True, blank=True)
     last_name = models.CharField(max_length=150, null=True, blank=True)
     client_phone = models.CharField(max_length=20, null=True, blank=True)
-    qticket_id = models.PositiveIntegerField(db_index=True)
+    qticket_id = models.PositiveIntegerField(db_index=True, unique=True)
     created_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
