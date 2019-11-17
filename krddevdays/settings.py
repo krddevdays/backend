@@ -87,6 +87,8 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'site@localhost')
+
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):

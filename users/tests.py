@@ -1,5 +1,8 @@
+from urllib.parse import urlparse, parse_qs
+
 from django.apps import apps
 from django.contrib.auth import get_user
+from django.core import mail
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.test import TestCase
 from django.urls import reverse
@@ -98,3 +101,23 @@ class UserTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertNotEqual(data['email'], values['email'])
+
+    def test_reset_password(self):
+        url = reverse('reset_password')
+        response = self.client.post(url, {'email': 'wrong email'}, content_type='application/json')
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(url, {'email': self.user.email}, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 1)
+        link = next(line for line in mail.outbox[0].body.split('\n') if line.startswith('http'))
+        params = parse_qs(urlparse(link).query)
+
+        old_password_hash = self.user.password
+        url = reverse('set_password')
+        data = {'password': get_random_string(), 'token': params['token'][0], 'uid': params['uid'][0]}
+        response = self.client.post(url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(self._is_authenticated())
+        self.user.refresh_from_db()
+        self.assertNotEqual(old_password_hash, self.user.password)
