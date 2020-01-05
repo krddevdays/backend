@@ -4,7 +4,7 @@ from factory import SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyText, FuzzyFloat, FuzzyDateTime, FuzzyChoice
 
-from events.interfaces import ActivityType
+from .interfaces import ActivityType, EventStatusType
 
 
 class VenueFactory(DjangoModelFactory):
@@ -32,6 +32,7 @@ class EventFactory(DjangoModelFactory):
     finish_date = FuzzyDateTime(start_dt=datetime.datetime(2019, 1, 1, tzinfo=datetime.timezone.utc),
                                 end_dt=datetime.datetime(2019, 12, 31, tzinfo=datetime.timezone.utc))
     venue = SubFactory(VenueFactory)
+    status = EventStatusType.PUBLISHED
 
     class Meta:
         model = 'events.Event'
@@ -56,3 +57,11 @@ class PartnerFactory(DjangoModelFactory):
 
     class Meta:
         model = 'events.Partner'
+
+
+class UserFactory(DjangoModelFactory):
+    email = FuzzyText(suffix='@example.com')
+    username = FuzzyText()
+
+    class Meta:
+        model = 'users.User'

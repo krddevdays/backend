@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
-from events.interfaces import PartnerType
+from .interfaces import PartnerType, EventStatusType
 from .models import Event, Activity
 from .qtickets import QTicketsInfo, TicketsSerializer
 from .serializers import EventSerializer, ActivitySerializer, QTicketsOrderSerializer, PartnerSerializer
@@ -21,11 +21,18 @@ class EventFilter(FilterSet):
 
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Event.objects.order_by('-start_date').all()
+    queryset = Event.objects.order_by('-start_date')
     serializer_class = EventSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = EventFilter
     search_fields = ('name',)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if user.is_authenticated and (user.is_staff or user.has_perm('events.view_draft')):
+            return qs.all()
+        return qs.exclude(status=EventStatusType.DRAFT)
 
     @action(detail=True)
     def activities(self, *args, **kwargs):

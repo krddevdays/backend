@@ -1,6 +1,11 @@
 from django_enumfield import enum
 
 
+class EventStatusType(enum.Enum):
+    DRAFT = 0
+    PUBLISHED = 1
+
+
 class ActivityType(enum.Enum):
     WELCOME = 0
     TALK = 1
