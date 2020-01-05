@@ -100,7 +100,7 @@ class QTicketsOrderSerializer(serializers.Serializer):
     seats_info = None
     current_show = None
 
-    def __init__(self, event_id, instance=None, data=empty, **kwargs):
+    def __init__(self, event_id=None, instance=None, data=empty, **kwargs):
         self._event_id = event_id
         super().__init__(instance, data, **kwargs)
 
