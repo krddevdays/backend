@@ -1,5 +1,6 @@
 import json
 from functools import wraps
+from json import JSONDecodeError
 
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
@@ -23,7 +24,7 @@ def decode_json(request):
     if request.content_type == 'application/json':
         try:
             return json.loads(request.body)
-        except:
+        except JSONDecodeError:
             return HttpResponseBadRequest('Cannot decode body.')
     else:
         return request.POST

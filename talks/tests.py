@@ -90,7 +90,10 @@ class DiscussionTestClass(TestCase):
     def test_activity_interface(self):
         activity = ActivityFactory(type=ActivityType.DISCUSSION)
         discussion: Discussion = DiscussionFactory(activity=activity)
-        self.assertEqual(discussion.self_link(), f'<a href="/admin/talks/discussion/{discussion.id}/change/">{discussion.title}</a>')
+        self.assertEqual(
+            discussion.self_link(),
+            f'<a href="/admin/talks/discussion/{discussion.id}/change/">{discussion.title}</a>'
+        )
 
         response = self.client.get(reverse('event-activities', args=(activity.event.id,)))
         self.assertEqual(response.status_code, 200)

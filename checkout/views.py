@@ -16,7 +16,7 @@ def link_user_qtickets(request):
 
     try:
         data = json.loads(request.body)
-    except:
+    except Exception:
         return HttpResponseBadRequest('Cannot decode body.')
 
     ticket = get_object_or_404(Ticket, qticket_id=data.get('id'))
