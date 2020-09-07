@@ -7,6 +7,7 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('', include('events.urls')),
     path('', include('talks.urls')),
+    path('', include('career.urls')),
     path('docs/', include_docs_urls(title='Krasnodar Dev Days API')),
     path('', include('checkout.urls')),
 ]

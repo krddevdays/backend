@@ -9,16 +9,12 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 
-from events.interfaces import PartnerType
+from krddevdays.serializers import EnumField
+from .interfaces import PartnerType
 from .exceptions import QErr
 from .models import Event, Activity, ActivityType, Venue, Zone, Partner
 from .qtickets import QTicketsInfo
 from .validators import check_inn
-
-
-class EnumField(serializers.ChoiceField):
-    def to_representation(self, obj):
-        return self.choices[obj].name
 
 
 class BaseActivitySerializer(serializers.Serializer):
