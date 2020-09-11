@@ -1,7 +1,7 @@
 from rest_framework import viewsets, mixins, permissions
 
-from .models import Vacancy
-from .serializers import VacancySerializer
+from .models import Vacancy, Technology
+from .serializers import VacancySerializer, TechnologySerializer
 
 
 class VacancyViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
@@ -12,3 +12,8 @@ class VacancyViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
 
     def perform_create(self, serializer: VacancySerializer):
         serializer.save(user=self.request.user)
+
+
+class TechnologyViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Technology.objects.all()
+    serializer_class = TechnologySerializer
