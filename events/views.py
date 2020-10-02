@@ -69,7 +69,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         if event.external_id is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        order = self.get_serializer(event_id=event.external_id, data=self.request.data)
+        order: QTicketsOrderSerializer = self.get_serializer(event_id=event.external_id, data=self.request.data)
         order.is_valid(raise_exception=True)
 
         try:

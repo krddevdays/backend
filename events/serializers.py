@@ -98,7 +98,7 @@ class QTicketsOrderSerializer(serializers.Serializer):
 
     event_info = None
     seats_info = None
-    current_show = None
+    current_show: dict = {}
 
     def __init__(self, event_id=None, instance=None, data=empty, **kwargs):
         self._event_id = event_id
@@ -156,7 +156,7 @@ class QTicketsOrderSerializer(serializers.Serializer):
             raise ValidationError(QErr.LEGAL)
         return payment_id
 
-    def order_tickets(self, host: str, external_id: int) -> str:
+    def order_tickets(self, host: str, external_id: int) -> dict:
         order_body = {
             'email': self.validated_data['email'],
             'name': self.validated_data['first_name'],
