@@ -3,7 +3,6 @@ import os
 import sentry_sdk
 from rest_framework.authentication import SessionAuthentication
 from sentry_sdk.integrations.django import DjangoIntegration
-from django.urls import get_script_prefix
 
 sentry_sdk.init(
     dsn=os.environ.get('SENTRY_DSN', ''),
@@ -103,7 +102,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-STATIC_URL = '%s%s' % (get_script_prefix(), 'static/')
+STATIC_URL = '%s%s' % (os.environ.get('SCRIPT_NAME', ''), '/static/')
 
 STATIC_ROOT = './static/'
 
