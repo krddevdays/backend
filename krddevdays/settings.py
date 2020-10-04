@@ -88,7 +88,12 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.yandex.ru')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 587)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'site@localhost')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'password')
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'site@localhost')
+EMAIL_USE_TLS = True
 
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
