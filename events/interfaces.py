@@ -1,4 +1,11 @@
+from typing import Optional
+
 from django_enumfield import enum
+
+
+class EventStatusType(enum.Enum):
+    DRAFT = 0
+    PUBLISHED = 1
 
 
 class ActivityType(enum.Enum):
@@ -16,7 +23,7 @@ class PartnerType(enum.Enum):
 
 
 class ActivityInterface:
-    title = None
+    title: Optional[str] = None
 
     def __str__(self):
         return self.title

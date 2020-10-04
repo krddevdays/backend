@@ -27,7 +27,7 @@ class ContactsMixin(models.Model):
                     obj = obj[path]
                 else:
                     value = obj[mapping]
-            except:
+            except Exception:
                 value = None
             setattr(self, key, value)
 
@@ -91,11 +91,11 @@ class Ticket(ContactsMixin, models.Model):
 
     qticket_fields = {
         **{
-              'first_name': 'client_name',
-              'last_name': 'client_surname',
-              'type': 'seat_id',
-          },
-          **{item: item for item in ('created_at', 'updated_at', 'deleted_at', 'pdf_url', 'passbook_url',
+            'first_name': 'client_name',
+            'last_name': 'client_surname',
+            'type': 'seat_id',
+        },
+        **{item: item for item in ('created_at', 'updated_at', 'deleted_at', 'pdf_url', 'passbook_url',
                                    'price', 'refunded_at', 'client_phone')}
     }
 

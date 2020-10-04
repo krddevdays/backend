@@ -46,7 +46,8 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = ('id', 'name', 'short_description', 'full_description', 'ticket_description',
                   'image', 'image_vk', 'image_facebook', 'start_date', 'finish_date', 'venue',
-                  'cfp_start', 'cfp_finish', 'cfp_url', 'discussion_start', 'discussion_finish')
+                  'cfp_start', 'cfp_finish', 'cfp_url', 'discussion_start', 'discussion_finish',
+                  'status')
 
 
 class ActivitySerializer(serializers.ModelSerializer):
@@ -97,9 +98,9 @@ class QTicketsOrderSerializer(serializers.Serializer):
 
     event_info = None
     seats_info = None
-    current_show = None
+    current_show: dict = {}
 
-    def __init__(self, event_id, instance=None, data=empty, **kwargs):
+    def __init__(self, event_id=None, instance=None, data=empty, **kwargs):
         self._event_id = event_id
         super().__init__(instance, data, **kwargs)
 
@@ -155,7 +156,7 @@ class QTicketsOrderSerializer(serializers.Serializer):
             raise ValidationError(QErr.LEGAL)
         return payment_id
 
-    def order_tickets(self, host: str, external_id: int) -> str:
+    def order_tickets(self, host: str, external_id: int) -> dict:
         order_body = {
             'email': self.validated_data['email'],
             'name': self.validated_data['first_name'],

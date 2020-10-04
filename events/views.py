@@ -2,10 +2,10 @@ from django.http import JsonResponse
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, DateTimeFilter
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 
-from events.interfaces import PartnerType
+from .interfaces import PartnerType, EventStatusType
 from .models import Event, Activity
 from .qtickets import QTicketsInfo, TicketsSerializer
 from .serializers import EventSerializer, ActivitySerializer, QTicketsOrderSerializer, PartnerSerializer
@@ -21,11 +21,20 @@ class EventFilter(FilterSet):
 
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Event.objects.order_by('-start_date').all()
+    queryset = Event.objects
     serializer_class = EventSerializer
-    filter_backends = (DjangoFilterBackend, SearchFilter)
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = EventFilter
     search_fields = ('name',)
+    ordering_fields = ['start_date', 'finish_date']
+    ordering = ['-start_date']
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if user.is_authenticated and (user.is_staff or user.has_perm('events.view_draft')):
+            return qs.all()
+        return qs.exclude(status=EventStatusType.DRAFT)
 
     @action(detail=True)
     def activities(self, *args, **kwargs):
@@ -60,7 +69,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         if event.external_id is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        order = self.get_serializer(event_id=event.external_id, data=self.request.data)
+        order: QTicketsOrderSerializer = self.get_serializer(event_id=event.external_id, data=self.request.data)
         order.is_valid(raise_exception=True)
 
         try:

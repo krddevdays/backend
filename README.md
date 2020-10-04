@@ -23,6 +23,11 @@ Copy `.env.example` to `.env` and fill variables
     $ ./manage.py createsuperuser
     ```
 
+1. Install pre-commit:
+    ```bash
+   $ brew install pre-commit
+   $ pre-commit install
+    ```
 ## via docker-compose:
 
 1. Build:
