@@ -1,3 +1,6 @@
+import string
+from decimal import Decimal
+
 from django.apps import apps
 from django.contrib.auth import get_user
 from django.core.exceptions import NON_FIELD_ERRORS
@@ -5,8 +8,62 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils.crypto import get_random_string
 
-from users.apps import UsersConfig
-from users.factories import UserFactory
+from .apps import UsersConfig
+from .factories import UserFactory, CompanyFactory
+from .models import CompanyStatus
+
+
+class CompanyTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
+    def test_create(self):
+        data = {
+            'title': get_random_string(),
+            'coordinates': [45.34, 34.45]
+        }
+        response = self.client.post(reverse('company-list'), data=data)
+        self.assertEqual(response.status_code, 403)  # https://github.com/encode/django-rest-framework/issues/5968
+
+        credentials = {'username': self.user.username, 'password': self.user.original_password}
+        response = self.client.post(reverse('login'), credentials)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(reverse('company-list'), data=data)
+        self.assertEqual(response.status_code, 201)
+        result = response.json()
+        self.assertEqual(result['owner']['id'], self.user.id)
+        self.assertEqual(result['title'], data['title'])
+        self.assertEqual(result['coordinates'], ['45.340000', '34.450000'])
+
+    def test_list(self):
+        company = CompanyFactory(
+            description=get_random_string(),
+            address=get_random_string(),
+            coordinates=(Decimal(45.34), Decimal(34.45)),
+            site=f'https://{get_random_string()}.com/',
+            phone=f'+79{get_random_string(length=9, allowed_chars=string.digits)}',
+            owner=self.user)
+        response = self.client.get(reverse('company-list'))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        obj = data[0]
+        self.assertEqual(obj['title'], company.title)
+        self.assertEqual(obj['description'], company.description)
+        self.assertEqual(obj['address'], company.address)
+        self.assertEqual(obj['coordinates'], ['45.340000', '34.450000'])
+        self.assertEqual(obj['site'], company.site)
+        self.assertEqual(obj['phone'], company.phone)
+        self.assertEqual(obj['email'], company.email)
+        self.assertEqual(obj['owner']['username'], company.owner.username)
+
+        company.status = CompanyStatus.HIDDEN
+        company.save()
+        response = self.client.get(reverse('company-list'))
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 0)
 
 
 class UserTestCase(TestCase):

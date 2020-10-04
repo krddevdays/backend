@@ -5,9 +5,11 @@ from json import JSONDecodeError
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.views import View
+from rest_framework import mixins, viewsets, permissions
 
-from users.serializers import UserSerializer
+from .serializers import UserSerializer, CompanySerializer
 from .forms import UserCreationForm, AuthenticationForm
+from .models import Company, CompanyStatus
 
 
 def user_required(view_func):
@@ -63,3 +65,13 @@ def login(request):
 def logout(request):
     auth_logout(request)
     return JsonResponse({})
+
+
+class CompanyViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
+                     mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Company.objects.filter(status=CompanyStatus.ACTIVE).all()
+    serializer_class = CompanySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def perform_create(self, serializer: CompanySerializer):
+        serializer.save(owner=self.request.user)
