@@ -10,7 +10,7 @@ from django.utils.crypto import get_random_string
 
 from .apps import UsersConfig
 from .factories import UserFactory, CompanyFactory
-from .models import CompanyStatus
+from .models import CompanyStatus, Company
 
 
 class CompanyTestCase(TestCase):
@@ -29,12 +29,33 @@ class CompanyTestCase(TestCase):
         credentials = {'username': self.user.username, 'password': self.user.original_password}
         response = self.client.post(reverse('login'), credentials)
         self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(reverse('company-list'), data=data)
+        result = response.json()
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('non_field_errors', result)
+
+        data['address'] = get_random_string()
         response = self.client.post(reverse('company-list'), data=data)
         self.assertEqual(response.status_code, 201)
         result = response.json()
-        self.assertEqual(result['owner']['id'], self.user.id)
         self.assertEqual(result['title'], data['title'])
         self.assertEqual(result['coordinates'], ['45.340000', '34.450000'])
+        new = Company.objects.get(pk=result['id'])
+        self.assertEqual(new.title, data['title'])
+        self.assertEqual(new.owner_id, self.user.id)
+
+    def test_pagination(self):
+        [CompanyFactory() for _ in range(12)]
+        response = self.client.get(reverse('company-list'))
+        result = response.json()['results']
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(result), 10)
+
+        response = self.client.get(reverse('company-list'), data={'page': 2})
+        result = response.json()['results']
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(result), 2)
 
     def test_list(self):
         company = CompanyFactory(
@@ -46,7 +67,7 @@ class CompanyTestCase(TestCase):
             owner=self.user)
         response = self.client.get(reverse('company-list'))
         self.assertEqual(response.status_code, 200)
-        data = response.json()
+        data = response.json()['results']
         self.assertEqual(len(data), 1)
         obj = data[0]
         self.assertEqual(obj['title'], company.title)
@@ -56,13 +77,12 @@ class CompanyTestCase(TestCase):
         self.assertEqual(obj['site'], company.site)
         self.assertEqual(obj['phone'], company.phone)
         self.assertEqual(obj['email'], company.email)
-        self.assertEqual(obj['owner']['username'], company.owner.username)
 
         company.status = CompanyStatus.HIDDEN
         company.save()
         response = self.client.get(reverse('company-list'))
         self.assertEqual(response.status_code, 200)
-        data = response.json()
+        data = response.json()['results']
         self.assertEqual(len(data), 0)
 
 

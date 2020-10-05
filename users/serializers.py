@@ -1,5 +1,6 @@
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from .models import User, Company
 
@@ -11,17 +12,16 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('username', 'email')
 
 
-class OwnerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'work', 'position')
-
-
 class CompanySerializer(serializers.ModelSerializer):
     phone = PhoneNumberField(required=False)
-    owner = OwnerSerializer(required=False)
 
     class Meta:
         model = Company
-        fields = ('title', 'description', 'address', 'coordinates', 'site', 'phone', 'email', 'owner')
-        read_only_fields = ('owner',)
+        fields = ('id', 'title', 'description', 'address', 'coordinates', 'site', 'phone', 'email')
+
+    def validate(self, attrs):
+        address = bool(attrs.get('address'))
+        coordinates = bool(attrs.get('coordinates'))
+        if address != coordinates:
+            raise ValidationError('Координаты обязательны при указании адреса.')
+        return attrs
