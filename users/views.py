@@ -7,9 +7,12 @@ from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.views import View
+from rest_framework import mixins, viewsets, permissions
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 
-from users.serializers import UserSerializer
+from .serializers import UserSerializer, CompanySerializer
 from .forms import UserCreationForm, AuthenticationForm, PasswordSetForm
+from .models import Company, CompanyStatus
 
 
 def user_required(view_func):
@@ -83,3 +86,20 @@ def set_password(request):
         auth_login(request, user)
         return JsonResponse({})
     return JsonResponse(form.errors, status=400)
+
+
+class CompanyPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+class CompanyViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
+                     mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Company.objects.filter(status=CompanyStatus.ACTIVE).all()
+    serializer_class = CompanySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    pagination_class = CompanyPagination
+
+    def perform_create(self, serializer: CompanySerializer):
+        serializer.save(owner=self.request.user)
