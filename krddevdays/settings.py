@@ -3,6 +3,7 @@ import os
 import sentry_sdk
 from rest_framework.authentication import SessionAuthentication
 from sentry_sdk.integrations.django import DjangoIntegration
+from django.urls import get_script_prefix
 
 sentry_sdk.init(
     dsn=os.environ.get('SENTRY_DSN', ''),
@@ -88,6 +89,13 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.yandex.ru')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 587)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'site@localhost')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'password')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'site@localhost')
+EMAIL_USE_TLS = True
+
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
@@ -103,7 +111,8 @@ REST_FRAMEWORK = {
     ),
 }
 
-STATIC_URL = '/static/'
+STATIC_URL = '%s%s' % (get_script_prefix(), 'static/')
+
 STATIC_ROOT = './static/'
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

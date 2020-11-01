@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django_enumfield import enum
 
 
@@ -21,7 +23,7 @@ class PartnerType(enum.Enum):
 
 
 class ActivityInterface:
-    title = None
+    title: Optional[str] = None
 
     def __str__(self):
         return self.title

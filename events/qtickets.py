@@ -62,7 +62,7 @@ class QTickets:
             if page > response['paging']['total']:
                 return result
 
-    def get_order_tickets_url(self, tickets_data: dict) -> str:
+    def get_order_tickets_url(self, tickets_data: dict) -> dict:
         request_body = {
             "data": {
                 "client": {

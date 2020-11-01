@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import path
 
 from checkout.views import link_user_qtickets, webhook, user_tickets
 from users.views import user_required

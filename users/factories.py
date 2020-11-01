@@ -3,6 +3,7 @@ import string
 import factory
 from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
+from factory import SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyText
 
@@ -26,3 +27,12 @@ class UserFactory(DjangoModelFactory):
     def set_password(self, create, extracted, **kwargs):
         self.original_password = get_random_string(allowed_chars=string.ascii_lowercase)
         self.set_password(self.original_password)
+
+
+class CompanyFactory(DjangoModelFactory):
+    title = FuzzyText(chars=string.ascii_lowercase)
+    email = FuzzyText(suffix='@email.org', chars=string.ascii_lowercase)
+    owner = SubFactory(UserFactory)
+
+    class Meta:
+        model = 'users.Company'
