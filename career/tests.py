@@ -21,10 +21,8 @@ class CareerTestCase(TestCase):
         data = {
             'company': get_random_string(),
             'description': get_random_string(),
-            'technologies': [get_random_string(10) for _ in range(3)],
-            'placement': 0,
+            'skills': [get_random_string(10) for _ in range(3)],
             'address': get_random_string(),
-            'employment': 0,
             'start_cost': 90_000,
             'finish_cost': 120_000
         }
@@ -43,10 +41,13 @@ class CareerTestCase(TestCase):
         data = {
             'company': get_random_string(),
             'description': get_random_string(),
-            'technologies': [get_random_string(10) for _ in range(3)],
-            'placement': 0,
+            'skills': [get_random_string(10) for _ in range(3)],
+            'placement': 'office',
             'address': get_random_string(),
-            'employment': 0,
+            'employment': 'full',
+            'level': 'junior',
+            'practice': 'qa',
+            'contacts': 'example@mail.com',
             'start_cost': 120_000,
             'finish_cost': 90_000
         }

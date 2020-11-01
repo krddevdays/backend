@@ -1,21 +1,18 @@
+from enumfields.drf import EnumSupportSerializerMixin
 from rest_framework import serializers
 
-from krddevdays.serializers import EnumField
 from users.serializers import UserSerializer
-from .enums import PlacementType, EmploymentType
-from .models import Vacancy, Technology
+from .models import Vacancy, Skill
 
 
-class VacancySerializer(serializers.ModelSerializer):
-    placement = EnumField(choices=PlacementType.choices())
-    employment = EnumField(choices=EmploymentType.choices())
+class VacancySerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Vacancy
-        fields = ('company', 'description', 'technologies', 'placement', 'address', 'employment',
-                  'link', 'start_cost', 'finish_cost', 'user', 'created_at')
+        fields = ('company', 'description', 'skills', 'placement', 'address', 'employment', 'level', 'practice',
+                  'link', 'start_cost', 'finish_cost', 'user', 'contacts', 'created_at')
 
     def validate(self, data):
         if data['start_cost'] > data['finish_cost']:
@@ -23,7 +20,7 @@ class VacancySerializer(serializers.ModelSerializer):
         return data
 
 
-class TechnologySerializer(serializers.ModelSerializer):
+class SkillSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Technology
+        model = Skill
         fields = '__all__'

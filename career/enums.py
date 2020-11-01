@@ -1,20 +1,44 @@
-from django_enumfield import enum
+from enum import Enum
 
 
-class PlacementType(enum.Enum):
-    OFFICE = 0
-    REMOTE = 1
-    BOTH = 2
+class PlacementType(Enum):
+    OFFICE = 'office'
+    REMOTE = 'remote'
+    BOTH = 'both'
 
 
-class EmploymentType(enum.Enum):
-    FULL_TIME = 0
-    PART_TIME = 1
-    PROJECT = 2
-    INTERNSHIP = 3
+class PracticeType(Enum):
+    BACKEND = 'backend'
+    FRONTEND = 'frontend'
+    MOBILE = 'mobile'
+    DESIGN = 'design'
+    ADMIN = 'admin'
+    QA = 'qa'
+    DESKTOP = 'desktop'
+    MANAGEMENT = 'management'
+    MARKETING = 'marketing'
+    ANALYTIC = 'analytics'
+    CONTENT = 'content'
+    HR = 'hr'
+    OTHER = 'other'
 
 
-class VacancyStatus(enum.Enum):
-    ACTIVE = 0
-    ARCHIVED = 1
-    DECLINED = 2
+class EmploymentType(Enum):
+    FULL_TIME = 'full'
+    PART_TIME = 'part'
+    PROJECT = 'project'
+    INTERNSHIP = 'intern'
+
+
+class VacancyStatus(Enum):
+    ACTIVE = 'active'
+    ARCHIVED = 'archived'
+    DECLINED = 'declined'
+
+
+class LevelType(Enum):
+    INTERN = 'intern'
+    JUNIOR = 'junior'
+    MIDDLE = 'middle'
+    SENIOR = 'senior'
+    LEAD = 'lead'
