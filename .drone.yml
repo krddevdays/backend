@@ -1,0 +1,19 @@
+kind: pipeline
+type: kubernetes
+name: default
+
+steps:
+  - name: version
+    image: node:16.14
+    commands:
+      - node ./version.js > .tags
+      - cat .tags
+
+  - name: build
+    image: plugins/docker:20.10
+    settings:
+      repo: cr.yandex/crptsm0vtuj4fltqor20/backend
+      registry: cr.yandex
+      username: json_key
+      password:
+        from_secret: YC_IAM_SERVICE_ACCOUNT_AUTH_KEYS
