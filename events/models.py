@@ -35,7 +35,7 @@ class Event(models.Model):
     finish_date = models.DateTimeField()
     venue = models.ForeignKey(Venue, on_delete=models.PROTECT)
     external_id = models.IntegerField(null=True, blank=True)
-    image = models.URLField()
+    image = models.URLField(null=True, blank=True)
     image_vk = models.URLField(null=True, blank=True)
     image_facebook = models.URLField(null=True, blank=True)
     cfp_start = models.DateTimeField(null=True, blank=True)
