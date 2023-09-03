@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'events',
     'talks',
     'checkout',
+    'career',
 ]
 
 MIDDLEWARE = [
@@ -108,6 +109,7 @@ REST_FRAMEWORK = {
         'krddevdays.settings.CsrfExemptSessionAuthentication',
         'rest_framework.authentication.BasicAuthentication'
     ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 STATIC_URL = '%s%s' % (get_script_prefix(), 'static/')

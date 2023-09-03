@@ -7,7 +7,7 @@ verify_ssl = true
 factory-boy = "*"
 
 [packages]
-django = "*"
+django = "==2.2.16"
 psycopg2 = "*"
 django-enumfield = "*"
 djangorestframework = "*"
@@ -22,6 +22,7 @@ python-dateutil = "*"
 python-dotenv = "*"
 django-filter = "*"
 sentry-sdk = "*"
+django-enumfields = "*"
 
 [requires]
 python_version = "3.6"
