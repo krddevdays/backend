@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import viewsets, mixins, permissions
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -42,7 +42,7 @@ class DiscussionViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
             raise ValidationError('Discussion submission closed')
         serializer.save(author=self.request.user)
 
-    @detail_route(methods=('POST',))
+    @action(methods=['post'], detail=True)
     def vote(self, request, pk=None):
         instance: Discussion = self.get_object()
         if (instance.event.discussion_finish is not None) and (timezone.now() > instance.event.discussion_finish):
