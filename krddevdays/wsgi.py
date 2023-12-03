@@ -1,4 +1,6 @@
 import os
+import base64
+import json
 
 import dotenv
 from django.core.wsgi import get_wsgi_application
@@ -11,7 +13,9 @@ _application = get_wsgi_application()
 
 
 def application(environ, start_response):
-    script_name = environ.get('HTTP_X_SCRIPT_NAME', '')
+    api_gateway_context_raw = base64.b64decode(environ.get('HTTP_X_YC_APIGATEWAY_OPERATION_CONTEXT', 'e30=')).decode('utf8')
+    api_gateway_context_json = json.loads(api_gateway_context_raw)
+    script_name = environ.get('HTTP_X_SCRIPT_NAME', api_gateway_context_json.get('X-Script-Name', ''))
     if script_name:
         environ['SCRIPT_NAME'] = script_name
         path_info = environ['PATH_INFO']
