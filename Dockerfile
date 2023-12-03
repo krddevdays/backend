@@ -1,12 +1,11 @@
-FROM tiangolo/uwsgi-nginx:python3.6-alpine3.9
+FROM tiangolo/uwsgi-nginx:python3.7
 
-RUN apk add --no-cache gcc python3-dev postgresql-dev musl-dev
-RUN pip install --no-cache-dir pipenv
-
-EXPOSE 8000
+ENV LISTEN_PORT 8080
+EXPOSE 8080
 
 WORKDIR /app
 
+RUN pip install --no-cache-dir pipenv
 COPY Pipfile* /app/
 RUN pipenv install --system
 
