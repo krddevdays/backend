@@ -1,4 +1,4 @@
-FROM tiangolo/uwsgi-nginx:python3.8
+FROM tiangolo/uwsgi-nginx:python3.9
 
 ENV LISTEN_PORT 8080
 EXPOSE 8080
