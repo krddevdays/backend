@@ -1,5 +1,6 @@
 import string
 
+import factory
 from factory import SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyText
@@ -20,10 +21,14 @@ class SpeakerFactory(DjangoModelFactory):
 class TalkFactory(DjangoModelFactory):
     title = FuzzyText()
     description = FuzzyText()
-    speaker = SubFactory(SpeakerFactory)
+    # speakers = SubFactory(SpeakerFactory)
 
     class Meta:
         model = 'talks.Talk'
+
+    @factory.post_generation
+    def speakers(self, create, extracted, **kwargs):
+        self.speakers.add(SpeakerFactory())
 
 
 class DiscussionFactory(DjangoModelFactory):

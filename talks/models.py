@@ -23,7 +23,7 @@ class Talk(ActivityInterface, models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     poster_image = models.URLField(null=True, blank=True)
-    speaker = models.ForeignKey(Speaker, on_delete=models.PROTECT)
+    speakers = models.ManyToManyField(Speaker, related_name='speakers')
     presentation_online = models.URLField(null=True, blank=True)
     presentation_offline = models.URLField(null=True, blank=True)
     video = models.URLField(null=True, blank=True)
