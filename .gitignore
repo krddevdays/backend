@@ -3,3 +3,4 @@
 .env
 /static/
 /supervisord.pid
+.DS_Store
