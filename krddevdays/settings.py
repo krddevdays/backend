@@ -4,6 +4,7 @@ import sentry_sdk
 from rest_framework.authentication import SessionAuthentication
 from sentry_sdk.integrations.django import DjangoIntegration
 from django.urls import get_script_prefix
+from corsheaders.defaults import default_headers
 
 sentry_sdk.init(
     dsn=os.environ.get('SENTRY_DSN', ''),
@@ -18,6 +19,8 @@ DEBUG = os.environ.get('DEBUG') == 'True'
 
 allowed_host = os.environ.get('ALLOWED_HOSTS', '')
 ALLOWED_HOSTS = ('*',) if allowed_host == '' else allowed_host.split(',')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -76,6 +79,7 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASSWORD', 'krddevdays'),
         'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
         'PORT': os.environ.get('DB_PORT', '5432'),
+        'CONN_MAX_AGE': None
     }
 }
 
@@ -128,3 +132,9 @@ if cors_list == '':
 else:
     CORS_ORIGIN_WHITELIST = cors_list.split(',')
     CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+    "sentry-trace",
+    "baggage",
+)

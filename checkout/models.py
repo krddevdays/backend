@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 from events.models import Event
@@ -34,7 +33,7 @@ class ContactsMixin(models.Model):
 
 class Order(ContactsMixin, models.Model):
     event = models.ForeignKey(Event, on_delete=models.PROTECT)
-    response = JSONField(default=dict)
+    response = models.JSONField(default=dict)
     payed_at = models.DateTimeField(null=True, blank=True)
     reserved_to = models.DateTimeField(null=True, blank=True)
     reserved = models.BooleanField(default=False, null=True)
