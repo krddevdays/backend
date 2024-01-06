@@ -1,6 +1,6 @@
 import csv
 
-from django.conf.urls import url
+from django.urls import re_path
 from django.contrib import admin
 from django.http import HttpResponse
 from django.template.defaultfilters import safe
@@ -94,6 +94,6 @@ class TicketAdmin(admin.ModelAdmin):
         urls = super(TicketAdmin, self).get_urls()
         model_info = (self.model._meta.app_label, self.model._meta.model_name)
         employer_urls = [
-            url(r'^export/$', self.admin_site.admin_view(self.export), name='%s_%s_export' % model_info),
+            re_path(r'^export/$', self.admin_site.admin_view(self.export), name='%s_%s_export' % model_info),
         ]
         return employer_urls + urls
