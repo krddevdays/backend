@@ -79,7 +79,11 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASSWORD', 'krddevdays'),
         'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
         'PORT': os.environ.get('DB_PORT', '5432'),
-        'CONN_MAX_AGE': None
+        'CONN_HEALTH_CHECKS': True,
+        'CONN_MAX_AGE': None,
+        "OPTIONS": {
+            "server_side_binding": True,
+        }
     }
 }
 
